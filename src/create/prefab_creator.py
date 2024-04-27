@@ -1,5 +1,6 @@
 import pygame
 import esper
+from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -16,7 +17,7 @@ def create_sprite(world: esper.World, pos: pygame.Vector2, vel: pygame.Vector2,
     return sprite_entity
 
 
-def create_player(world: esper.World, player_info: dict):
+def create_player(world: esper.World, player_info: dict) -> int:
     player_surface = ServiceLocator.images_service.get(player_info['image'])
     player_size = player_surface.get_size()
     position = pygame.Vector2(
@@ -24,3 +25,11 @@ def create_player(world: esper.World, player_info: dict):
     velocity = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, position, velocity, player_surface)
     world.add_component(player_entity, CTagPlayer())
+    return player_entity
+
+
+def create_input_player(world: esper.World):
+    input_left = world.create_entity()
+    input_right = world.create_entity()
+    world.add_component(input_left, CInputCommand("PLAYER_LEFT", [pygame.K_LEFT, pygame.K_a]))
+    world.add_component(input_right, CInputCommand("PLAYER_RIGHT", [pygame.K_RIGHT, pygame.K_d]))

@@ -3,5 +3,6 @@
   "start_pos": {
     "x": 128,
     "y": 235
-  }
+  },
+  "input_velocity": 50
 }
