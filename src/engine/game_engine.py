@@ -1,7 +1,11 @@
 import esper
 import pygame
 
-from src.create.prefab_creator import create_player
+from src.create.prefab_creator import create_player, create_input_player
+from src.ecs.components.c_input_command import CInputCommand, CommandPhase
+from src.ecs.components.c_velocity import CVelocity
+from src.ecs.systems.s_input_player import system_input_player
+from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_rendering import system_rendering
 from src.utilities.config_loader import load_config_file
 
@@ -40,7 +44,9 @@ class GameEngine:
         self._clean()
 
     def _create(self):
-        create_player(self.ecs_world, self.player_cfg)
+        self._player_entity = create_player(self.ecs_world, self.player_cfg)
+        self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
+        create_input_player(self.ecs_world)
 
     def _calculate_time(self):
         if not self.pause:
@@ -52,10 +58,13 @@ class GameEngine:
             self.delta_time = 0
 
     def _process_events(self):
-        pass
+        for event in pygame.event.get():
+            system_input_player(self.ecs_world, event, self._do_action)
+            if event.type == pygame.QUIT:
+                self.is_running = False
 
     def _update(self):
-        pass
+        system_movement(self.ecs_world, self.delta_time)
 
     def _draw(self):
         self.screen.fill(self.bg_color)
@@ -65,3 +74,16 @@ class GameEngine:
     def _clean(self):
         self.ecs_world.clear_database()
         pygame.quit()
+
+    def _do_action(self, c_input: CInputCommand):
+        if c_input.name == "PLAYER_LEFT":
+            if c_input.phase == CommandPhase.START:
+                self._player_c_v.vel.x -= self.player_cfg['input_velocity']
+            elif c_input.phase == CommandPhase.END:
+                self._player_c_v.vel.x += self.player_cfg['input_velocity']
+
+        if c_input.name == "PLAYER_RIGHT":
+            if c_input.phase == CommandPhase.START:
+                self._player_c_v.vel.x += self.player_cfg['input_velocity']
+            elif c_input.phase == CommandPhase.END:
+                self._player_c_v.vel.x -= self.player_cfg['input_velocity']
