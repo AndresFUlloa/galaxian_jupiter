@@ -5,9 +5,9 @@ class FontsService:
     def __init__(self):
         self.fonts = {}
 
-    def get(self, path: str, size:int):
-        font_name = path + str(size)
-        if font_name not in self.fonts:
-            self.fonts[font_name] = pygame.font.Font(path, size)
+    def get(self, path: str, size: int):
+        key = (path, size)
+        if key not in self.fonts:
+            self.fonts[key] = pygame.font.Font(path, size)
 
-        return self.fonts[font_name]
+        return self.fonts[key]
