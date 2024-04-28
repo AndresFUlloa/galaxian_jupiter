@@ -6,6 +6,7 @@ from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
+from src.ecs.systems.s_player_boundaries import system_player_boundaries
 from src.ecs.systems.s_rendering import system_rendering
 from src.utilities.config_loader import load_config_file
 
@@ -65,6 +66,7 @@ class GameEngine:
 
     def _update(self):
         system_movement(self.ecs_world, self.delta_time)
+        system_player_boundaries(self.ecs_world, self._player_entity, self.screen, self.window_cfg['margin'])
 
     def _draw(self):
         self.screen.fill(self.bg_color)
