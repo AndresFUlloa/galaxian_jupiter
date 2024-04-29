@@ -4,10 +4,12 @@ import pygame
 from src.create.prefab_creator import create_player, create_input_player
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_velocity import CVelocity
-from src.ecs.systems.s_input_player import system_input_player
+from src.ecs.systems.s_input import system_input
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
 from src.ecs.systems.s_rendering import system_rendering
+from src.engine.scenes.scene import Scene
+from src.game.play_scene import PlayScene
 from src.utilities.config_loader import load_config_file
 
 
@@ -19,14 +21,17 @@ class GameEngine:
         pygame.init()
         pygame.display.set_caption(self.window_cfg['title'])
         self.screen = pygame.display.set_mode((screen_size['w'], screen_size['h']), pygame.SCALED)
-        self.clock = pygame.time.Clock()
+        self._clock = pygame.time.Clock()
         self.is_running = False
-        self.frame_rate = self.window_cfg['framerate']
-        self.delta_time = 0
+        self._framerate = self.window_cfg['framerate']
+        self._delta_time = 0
         self.current_time = 0.0
         self.ecs_world = esper.World()
         self.bg_color = pygame.Color(t_color['r'], t_color['g'], t_color['b'])
-        self.pause = False
+
+        self._scenes: dict[str, Scene] = {"LEVEL_01": PlayScene("assets/cfg/lvls.json", self)}
+        self._current_scene: Scene = None
+        self._scene_name_to_switch: str = None
 
     def _load_config_files(self):
         self.interface_cfg = load_config_file('assets/cfg/interface.json')
@@ -34,58 +39,53 @@ class GameEngine:
         self.window_cfg = load_config_file('assets/cfg/window.json')
         self.player_cfg = load_config_file('assets/cfg/player.json')
 
-    def run(self) -> None:
-        self._create()
+    def run(self, star_scene_name: str) -> None:
         self.is_running = True
+        self._current_scene = self._scenes[star_scene_name]
+        self._create()
         while self.is_running:
             self._calculate_time()
             self._process_events()
             self._update()
             self._draw()
+            self._handle_switch_scene()
         self._clean()
 
+    def switch_scene(self, new_scene_name: str):
+        self._scene_name_to_switch = new_scene_name
+
     def _create(self):
-        self._player_entity = create_player(self.ecs_world, self.player_cfg)
-        self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
-        create_input_player(self.ecs_world)
+        self._current_scene.do_create()
 
     def _calculate_time(self):
-        if not self.pause:
-            self.clock.tick(self.frame_rate)
-            self.delta_time = self.clock.get_time() / 1000.0
-            self.current_time += self.delta_time
-        else:
-            self.clock.tick(0)
-            self.delta_time = 0
+        self._clock.tick(self._framerate)
+        self._delta_time = self._clock.get_time() / 1000.0
 
     def _process_events(self):
         for event in pygame.event.get():
-            system_input_player(self.ecs_world, event, self._do_action)
+            self._current_scene.do_process_events(event)
             if event.type == pygame.QUIT:
                 self.is_running = False
 
     def _update(self):
-        system_movement(self.ecs_world, self.delta_time)
-        system_player_boundaries(self.ecs_world, self._player_entity, self.screen, self.window_cfg['margin'])
+        self._current_scene.simulate(self._delta_time)
 
     def _draw(self):
         self.screen.fill(self.bg_color)
-        system_rendering(self.ecs_world, self.screen)
+        self._current_scene.do_draw(self.screen)
         pygame.display.flip()
 
     def _clean(self):
-        self.ecs_world.clear_database()
+        if self._current_scene is not None:
+            self._current_scene.clean()
         pygame.quit()
 
-    def _do_action(self, c_input: CInputCommand):
-        if c_input.name == "PLAYER_LEFT":
-            if c_input.phase == CommandPhase.START:
-                self._player_c_v.vel.x -= self.player_cfg['input_velocity']
-            elif c_input.phase == CommandPhase.END:
-                self._player_c_v.vel.x += self.player_cfg['input_velocity']
+    def _handle_switch_scene(self):
+        if self._scene_name_to_switch is not None:
+            self._current_scene.clean()
+            self._current_scene = self._scenes[self._scene_name_to_switch]
+            self._current_scene.do_create()
+            self._scene_name_to_switch = None
 
-        if c_input.name == "PLAYER_RIGHT":
-            if c_input.phase == CommandPhase.START:
-                self._player_c_v.vel.x += self.player_cfg['input_velocity']
-            elif c_input.phase == CommandPhase.END:
-                self._player_c_v.vel.x -= self.player_cfg['input_velocity']
+    def _do_action(self, action: CInputCommand):
+        self._current_scene.do_action(action)
