@@ -19,7 +19,7 @@ def create_sprite(world: esper.World, pos: pygame.Vector2, vel: pygame.Vector2,
 
     world.add_component(sprite_entity, CTransform(pos))
     world.add_component(sprite_entity, CVelocity(vel))
-    world.add_component(sprite_entity, CSurface.from_surface(surface))
+    world.add_component(sprite_entity, c_s)
     return sprite_entity
 
 
