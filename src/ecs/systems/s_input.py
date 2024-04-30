@@ -6,9 +6,9 @@ import esper
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
 
-def system_input_player(world: esper.World,
-                        event: pygame.Event,
-                        do_action: Callable[[CInputCommand], None]):
+def system_input(world: esper.World,
+                 event: pygame.Event,
+                 do_action: Callable[[CInputCommand], None]):
     components = world.get_component(CInputCommand)
     c_input: CInputCommand
     for _, c_input in components:
