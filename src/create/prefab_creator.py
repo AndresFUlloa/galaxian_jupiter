@@ -1,5 +1,6 @@
 import pygame
 import esper
+from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
@@ -9,11 +10,16 @@ from src.engine.service_locator import ServiceLocator
 
 
 def create_sprite(world: esper.World, pos: pygame.Vector2, vel: pygame.Vector2,
-                  surface: pygame.Surface) -> int:
+                  surface: pygame.Surface, animations: dict = None) -> int:
     sprite_entity = world.create_entity()
+    c_s = CSurface.from_surface(surface)
+    if animations is not None:
+        c_s.area.width = c_s.area.width / animations['number_frames']
+        world.add_component(sprite_entity, CAnimation(animations))
+
     world.add_component(sprite_entity, CTransform(pos))
     world.add_component(sprite_entity, CVelocity(vel))
-    world.add_component(sprite_entity, CSurface.from_surface(surface))
+    world.add_component(sprite_entity, c_s)
     return sprite_entity
 
 

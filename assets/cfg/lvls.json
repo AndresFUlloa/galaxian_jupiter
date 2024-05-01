@@ -1,3 +1,5 @@
 [
-
+  {
+    "enemies_velocity": 20
+  }
 ]

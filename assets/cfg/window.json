@@ -10,5 +10,6 @@
         "b": 0
     },
     "framerate": 60,
-    "margin": 5
+    "player_margin": 5,
+    "enemies_margin": 10
 }
