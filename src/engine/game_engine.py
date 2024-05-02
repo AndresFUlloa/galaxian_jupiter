@@ -20,7 +20,7 @@ class GameEngine:
         t_color = self.window_cfg["bg_color"]
         pygame.init()
         pygame.display.set_caption(self.window_cfg['title'])
-        self.screen = pygame.display.set_mode((screen_size['w'], screen_size['h']), pygame.SCALED)
+        self.screen = pygame.display.set_mode((screen_size['w'], screen_size['h']), pygame.SCALED) #eliminar el scaled
         self._clock = pygame.time.Clock()
         self.is_running = False
         self._framerate = self.window_cfg['framerate']
@@ -35,9 +35,9 @@ class GameEngine:
 
     def _load_config_files(self):
         self.interface_cfg = load_config_file('assets/cfg/interface.json')
-        self.starfield_cfg = load_config_file('assets/cfg/starfield.json')
         self.window_cfg = load_config_file('assets/cfg/window.json')
         self.player_cfg = load_config_file('assets/cfg/player.json')
+
 
     def run(self, star_scene_name: str) -> None:
         self.is_running = True

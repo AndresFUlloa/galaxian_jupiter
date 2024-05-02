@@ -25,13 +25,15 @@ class PlayScene(Scene):
         self._paused = False
 
     def do_create(self):
+        super().do_create()
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
-        self._paused = False
+        self._paused = False        
         create_input_player(self.ecs_world)
         create_enemies(self.ecs_world, self.enemies_cfg, pygame.Vector2(self.lvl_cfg['enemies_velocity'], 0))
 
     def do_update(self, delta_time: float):
+        super().do_update(delta_time)
         system_movement(self.ecs_world, delta_time)
         system_player_boundaries(self.ecs_world, self._player_entity, self.screen, self.window_cfg['player_margin'])
         system_animation(self.ecs_world, delta_time)
