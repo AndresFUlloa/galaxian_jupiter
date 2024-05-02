@@ -12,6 +12,10 @@ def system_rendering(world: esper.World, screen: pygame.Surface):
     c_s: CSurface
 
     for entity, (c_t, c_s) in components:
+        if not c_s.is_visible:
+            continue
+
+        screen.blit(c_s.surf, c_t.pos, area=c_s.area)
         if not world.has_component(entity, CTagStar):
             screen.blit(c_s.surf, c_t.pos, area=c_s.area)
         else:
