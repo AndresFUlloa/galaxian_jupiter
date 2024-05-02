@@ -10,11 +10,12 @@ from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_star import CTagStar
 from src.engine.service_locator import ServiceLocator
 
+
 def create_square(world:esper.World, size:pygame.Vector2, pos:pygame.Vector2, vel:pygame.Vector2, col:pygame.Color) -> int:
     cuad_entity = world.create_entity()
     world.add_component(cuad_entity,
                         CSurface(size, col))
-    world.add_component(cuad_entity, 
+    world.add_component(cuad_entity,
                         CTransform(pos))
     world.add_component(cuad_entity,
                         CVelocity(vel))
@@ -52,6 +53,8 @@ def create_input_player(world: esper.World):
     world.add_component(input_left, CInputCommand("PLAYER_LEFT", [pygame.K_LEFT, pygame.K_a]))
     world.add_component(input_right, CInputCommand("PLAYER_RIGHT", [pygame.K_RIGHT, pygame.K_d]))
 
+    pause_action = world.create_entity()
+    world.add_component(pause_action, CInputCommand("PAUSE", [pygame.K_p]))
 
 
 def create_stars(world: esper.World, stars_info: dict, screen:pygame.Surface) -> None:
@@ -59,7 +62,7 @@ def create_stars(world: esper.World, stars_info: dict, screen:pygame.Surface) ->
     number_of_stars = stars_info["number_of_stars"]
     vertical_speed = stars_info["vertical_speed"]
     blink_rate = stars_info["blink_rate"]
-    
+
     for i in range(number_of_stars):
         pos = pygame.Vector2(random.randint(0, screen.get_width()-1), random.randint(0,screen.get_height()-1))
         vel = pygame.Vector2(0, random.randint(vertical_speed["min"], vertical_speed["max"]))
@@ -69,6 +72,3 @@ def create_stars(world: esper.World, stars_info: dict, screen:pygame.Surface) ->
         star_entity = create_square(world, pygame.Vector2(1,1), pos, vel, color)
         world.add_component(star_entity, CTagStar(blink_time, random.choice([True, False])))
 
-
-
-   
