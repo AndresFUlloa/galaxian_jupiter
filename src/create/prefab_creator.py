@@ -70,5 +70,7 @@ def create_stars(world: esper.World, stars_info: dict, screen:pygame.Surface) ->
         color = pygame.Color(dict_color["r"], dict_color["g"], dict_color["b"])
         blink_time = random.uniform(blink_rate["min"], blink_rate["max"])
         star_entity = create_square(world, pygame.Vector2(1,1), pos, vel, color)
-        world.add_component(star_entity, CTagStar(blink_time, random.choice([True, False])))
+        is_visible = random.choice([True, False])
+        world.component_for_entity(star_entity, CSurface).is_visible = is_visible
+        world.add_component(star_entity, CTagStar(blink_time))
 
