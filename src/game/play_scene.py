@@ -59,16 +59,16 @@ class PlayScene(Scene):
     def do_update(self, delta_time: float):
         super().do_update(delta_time)
         self._accumulated_time += delta_time
+        system_movement(self.ecs_world, delta_time, self._paused)
 
         if self._paused:
             system_flashing_text(self.ecs_world, self.paused_text_entity, 0.5, self._accumulated_time)
         else:
             system_animation(self.ecs_world, delta_time)
             system_enemies_bounce(self.ecs_world, self.screen, self.window_cfg['enemies_margin'])
-            system_movement(self.ecs_world, delta_time)
+
             system_player_boundaries(self.ecs_world, self._player_entity, self.screen, self.window_cfg['player_margin'])
             system_player_bullet_boundaries(self.ecs_world, self.screen)
-
 
     def do_clean(self):
         self._paused = False
@@ -85,11 +85,11 @@ class PlayScene(Scene):
                 self._player_c_v.vel.x += self.player_cfg['input_velocity']
             elif c_input.phase == CommandPhase.END:
                 self._player_c_v.vel.x -= self.player_cfg['input_velocity']
-    
+
         if c_input.name == "PLAYER_FIRE":
             if c_input.phase == CommandPhase.START:
-                create_player_bullet(self.ecs_world, self.bullets_cfg["player_bullet"], self.player_cfg["num_bullet"], self._player_entity)
-
+                create_player_bullet(self.ecs_world, self.bullets_cfg["player_bullet"], self.player_cfg["num_bullet"],
+                                     self._player_entity)
 
         if c_input.name == "PAUSE":
             if c_input.phase == CommandPhase.START:
