@@ -50,11 +50,13 @@ def create_player(world: esper.World, player_info: dict) -> int:
 def create_input_player(world: esper.World):
     input_left = world.create_entity()
     input_right = world.create_entity()
+    input_fire = world.create_entity()
     world.add_component(input_left, CInputCommand("PLAYER_LEFT", [pygame.K_LEFT, pygame.K_a]))
     world.add_component(input_right, CInputCommand("PLAYER_RIGHT", [pygame.K_RIGHT, pygame.K_d]))
-
+    world.add_component(input_fire, CInputCommand("PLAYER_FIRE", [pygame.K_z]))
     pause_action = world.create_entity()
     world.add_component(pause_action, CInputCommand("PAUSE", [pygame.K_p]))
+    
 
 
 def create_stars(world: esper.World, stars_info: dict, screen:pygame.Surface) -> None:

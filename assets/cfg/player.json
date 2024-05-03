@@ -4,5 +4,6 @@
     "x": 128,
     "y": 235
   },
-  "input_velocity": 50
+  "input_velocity": 50, 
+  "num_bullet": 1
 }
