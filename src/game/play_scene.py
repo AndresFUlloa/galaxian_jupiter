@@ -2,12 +2,13 @@ import pygame
 
 from src.create.prefab_creator import create_player, create_input_player
 from src.create.prefab_creator_interface import create_text, TextAlignment
-from src.create.prefab_creator_play import create_enemies, create_player_bullet
+from src.create.prefab_creator_play import create_enemies, create_player_bullet, create_enemies_stop_motion
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_enemies_bounce import system_enemies_bounce
+from src.ecs.systems.s_enemies_stop_motion import system_enemies_stop_motion
 from src.ecs.systems.s_flashing_text import system_flashing_text
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
@@ -38,6 +39,9 @@ class PlayScene(Scene):
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._paused = False
+        self._stop_motion_entity = create_enemies_stop_motion(
+            self.ecs_world, self.lvl_cfg['time_to_stop'], self.lvl_cfg['stopped_time'],
+            self.lvl_cfg['enemies_velocity'])
 
         paused_position = pygame.Vector2(
             self.screen.get_width() // 2,
@@ -65,8 +69,11 @@ class PlayScene(Scene):
             system_flashing_text(self.ecs_world, self.paused_text_entity, 0.5, self._accumulated_time)
         else:
             system_animation(self.ecs_world, delta_time)
-            system_enemies_bounce(self.ecs_world, self.screen, self.window_cfg['enemies_margin'])
-
+            system_enemies_bounce(
+                self.ecs_world, self.screen, self.window_cfg['enemies_margin'], self._stop_motion_entity)
+            system_enemies_stop_motion(
+                self.ecs_world, self._stop_motion_entity, self.lvl_cfg['time_to_stop'], self.lvl_cfg['stopped_time'],
+                delta_time)
             system_player_boundaries(self.ecs_world, self._player_entity, self.screen, self.window_cfg['player_margin'])
             system_player_bullet_boundaries(self.ecs_world, self.screen)
 
