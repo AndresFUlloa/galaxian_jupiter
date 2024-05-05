@@ -2,6 +2,7 @@ import pygame
 
 import esper
 from src.create.prefab_creator import create_sprite
+from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.engine.service_locator import ServiceLocator
 from src.create.prefab_creator import create_square
@@ -31,6 +32,7 @@ def create_player_bullet(world:esper.World, bullet_info:dict, num_bullet:int, pl
     if len(world.get_components(CTagPlayerBullet)) >= num_bullet:
         return
 
+    
     c_t:CTransform = world.component_for_entity(player_entity, CTransform)
     c_s:CSurface = world.component_for_entity(player_entity, CSurface)
     player_rect = c_s.surf.get_rect()
@@ -42,3 +44,6 @@ def create_player_bullet(world:esper.World, bullet_info:dict, num_bullet:int, pl
                 pos, pygame.Vector2(0,-bullet_info["velocity"]), 
                 pygame.Color(bullet_info["color"]["r"],bullet_info["color"]["g"], bullet_info["color"]["b"]))
     world.add_component(bullet_entity,CTagPlayerBullet()) 
+
+
+

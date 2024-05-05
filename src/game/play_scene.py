@@ -7,7 +7,9 @@ from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.systems.s_animation import system_animation
+from src.ecs.systems.s_collision_player_bullet_w_enemy import system_collision_bullet_enemy
 from src.ecs.systems.s_enemies_bounce import system_enemies_bounce
+from src.ecs.systems.s_explosion_time import system_explosion_time
 from src.ecs.systems.s_flashing_text import system_flashing_text
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
@@ -23,6 +25,7 @@ class PlayScene(Scene):
         self.paused_text_surface = None
         self.player_cfg = load_config_file('assets/cfg/player.json')
         self.bullets_cfg = load_config_file('assets/cfg/bullets.json')
+        self.explosion_cfg = load_config_file('assets/cfg/explosion.json')
         self.lvl_cfg = level_path
         self.screen = engine.screen
         self.window_cfg = engine.window_cfg
@@ -60,7 +63,7 @@ class PlayScene(Scene):
         super().do_update(delta_time)
         self._accumulated_time += delta_time
         system_movement(self.ecs_world, delta_time, self._paused)
-
+        
         if self._paused:
             system_flashing_text(self.ecs_world, self.paused_text_entity, 0.5, self._accumulated_time)
         else:
@@ -69,6 +72,11 @@ class PlayScene(Scene):
 
             system_player_boundaries(self.ecs_world, self._player_entity, self.screen, self.window_cfg['player_margin'])
             system_player_bullet_boundaries(self.ecs_world, self.screen)
+            system_collision_bullet_enemy(self.ecs_world,self.explosion_cfg)
+            system_explosion_time(self.ecs_world)
+            
+
+
 
     def do_clean(self):
         self._paused = False
