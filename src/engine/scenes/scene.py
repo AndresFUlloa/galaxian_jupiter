@@ -2,6 +2,7 @@ import pygame
 import esper
 
 from src.ecs.components.c_input_command import CInputCommand
+from src.ecs.systems.s_collision_player_bullet_w_enemy import system_collision_bullet_enemy
 from src.ecs.systems.s_input import system_input
 from src.ecs.systems.s_rendering import system_rendering
 import src.engine.game_engine
@@ -39,6 +40,7 @@ class Scene:
 
     def do_draw(self, screen):
         system_rendering(self.ecs_world, screen)
+        
 
     def do_action(self, action: CInputCommand):
         pass

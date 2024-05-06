@@ -6,6 +6,7 @@ from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_star import CTagStar
 from src.engine.service_locator import ServiceLocator
@@ -75,4 +76,17 @@ def create_stars(world: esper.World, stars_info: dict, screen:pygame.Surface) ->
         is_visible = random.choice([True, False])
         world.component_for_entity(star_entity, CSurface).is_visible = is_visible
         world.add_component(star_entity, CTagStar(blink_time))
+
+def create_explosion(world:esper.World,pos:pygame.Vector2,explosion_info:dict):
+     
+     #explosion_surface = pygame.image.load(explosion_info["image"]).convert_alpha()
+     explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
+     pos = pygame.Vector2(pos.x,
+                          pos.y)
+     vel = pygame.Vector2(0,0)
+     explosion_entity = create_sprite(world,pos,vel,explosion_surface)
+     world.add_component(explosion_entity,CTagExplosion())
+     world.add_component(explosion_entity,CAnimation(explosion_info["animations"]))
+     ServiceLocator.sounds_service.play(explosion_info["sound"])
+
 
