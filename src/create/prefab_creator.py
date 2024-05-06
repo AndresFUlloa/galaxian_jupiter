@@ -78,15 +78,12 @@ def create_stars(world: esper.World, stars_info: dict, screen:pygame.Surface) ->
         world.add_component(star_entity, CTagStar(blink_time))
 
 def create_explosion(world:esper.World,pos:pygame.Vector2,explosion_info:dict):
-     
-     #explosion_surface = pygame.image.load(explosion_info["image"]).convert_alpha()
      explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
      pos = pygame.Vector2(pos.x,
                           pos.y)
      vel = pygame.Vector2(0,0)
-     explosion_entity = create_sprite(world,pos,vel,explosion_surface)
+     explosion_entity = create_sprite(world,pos,vel,explosion_surface,explosion_info["animations"])
      world.add_component(explosion_entity,CTagExplosion())
-     world.add_component(explosion_entity,CAnimation(explosion_info["animations"]))
      ServiceLocator.sounds_service.play(explosion_info["sound"])
 
 
