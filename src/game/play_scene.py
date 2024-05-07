@@ -67,7 +67,7 @@ class PlayScene(Scene):
         super().do_update(delta_time)
         self._accumulated_time += delta_time
         system_movement(self.ecs_world, delta_time, self._paused)
-        
+
         if self._paused:
             system_flashing_text(self.ecs_world, self.paused_text_entity, 0.5, self._accumulated_time)
         else:
@@ -79,11 +79,8 @@ class PlayScene(Scene):
                 delta_time)
             system_player_boundaries(self.ecs_world, self._player_entity, self.screen, self.window_cfg['player_margin'])
             system_player_bullet_boundaries(self.ecs_world, self.screen)
-            system_collision_bullet_enemy(self.ecs_world,self.explosion_cfg)
+            system_collision_bullet_enemy(self.ecs_world, self.explosion_cfg)
             system_explosion_time(self.ecs_world)
-            
-
-
 
     def do_clean(self):
         self._paused = False

@@ -4,9 +4,9 @@ import pygame
 
 import esper
 from src.create.prefab_creator import create_sprite
-from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_enemies_stop_motion import CEnemiesStopMotion
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.engine.service_locator import ServiceLocator
 from src.create.prefab_creator import create_square
 from src.ecs.components.c_surface import CSurface
@@ -63,4 +63,15 @@ def create_player_bullet(world: esper.World, bullet_info: dict, num_bullet: int,
                                   pygame.Color(bullet_info["color"]["r"], bullet_info["color"]["g"],
                                                bullet_info["color"]["b"]))
     world.add_component(bullet_entity, CTagPlayerBullet())
+    ServiceLocator.sounds_service.play('assets/snd/player_shoot.ogg')
+
+
+def create_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: dict):
+    explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
+    pos = pygame.Vector2(pos.x,
+                         pos.y)
+    vel = pygame.Vector2(0, 0)
+    explosion_entity = create_sprite(world, pos, vel, explosion_surface, animations=explosion_info['animations'])
+    world.add_component(explosion_entity, CTagExplosion())
+    ServiceLocator.sounds_service.play(explosion_info["sound"])
 

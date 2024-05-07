@@ -3,14 +3,14 @@
     "image": "assets/img/invaders_enemy_04.png",
     "start_position": {
       "y": 40,
-      "x": 65
+      "x": 78
     },
     "quantity": {
       "rows": 1,
       "columns": 2
     },
     "distance": {
-      "x": 45,
+      "x": 65,
       "y": 0
     }
   },
@@ -19,14 +19,14 @@
     "image": "assets/img/invaders_enemy_03.png",
     "start_position": {
       "y": 55,
-      "x": 50
+      "x": 57
     },
     "quantity": {
       "rows": 1,
       "columns": 6
     },
     "distance": {
-      "x": 15,
+      "x": 22,
       "y": 0
     },
     "animations": {
@@ -52,14 +52,14 @@
     "image": "assets/img/invaders_enemy_01.png",
     "start_position": {
       "y": 70,
-      "x": 35
+      "x": 42
     },
     "quantity": {
       "rows": 1,
       "columns": 8
     },
     "distance": {
-      "x": 15,
+      "x": 20,
       "y": 0
     },
     "animations": {
@@ -92,7 +92,7 @@
       "columns": 10
     },
     "distance": {
-      "x": 15,
+      "x": 20,
       "y": 15
     },
     "animations": {

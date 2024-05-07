@@ -9,7 +9,11 @@ from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 def system_enemies_stop_motion(world: esper.World, stop_motion_entity: int, time_to_sopt:dict,
                                stopped_time: dict, delta_time: float):
     c_e_s_m = world.component_for_entity(stop_motion_entity, CEnemiesStopMotion)
-    c_v: CVelocity = world.get_components(CVelocity, CTagEnemy)[0][1][0]
+    components = world.get_components(CVelocity, CTagEnemy)
+    if len(components) == 0:
+        return
+
+    c_v: CVelocity = components[0][1][0]
     if c_e_s_m.stopped:
         c_e_s_m.remaining_stopped_time -= delta_time
         if c_e_s_m.remaining_stopped_time <= 0:
