@@ -8,8 +8,8 @@
         "r":255,
         "g":255,
         "b":255
-    }
-
+    },
+    "sound": "assets/snd/player_shoot.ogg"
 },
 "enemy_bullet":{
     "size": {
