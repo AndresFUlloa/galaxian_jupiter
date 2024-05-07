@@ -4,7 +4,6 @@ import pygame
 
 import esper
 from src.create.prefab_creator import create_sprite
-from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_enemies_stop_motion import CEnemiesStopMotion
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
@@ -44,9 +43,12 @@ def create_enemies_stop_motion(world: esper.World, time_to_stop: dict, stopped_t
 
 
 def create_player_bullet(world: esper.World, bullet_info: dict, num_bullet: int, player_entity: int):
+    
+    
     if len(world.get_components(CTagPlayerBullet)) >= num_bullet:
         return
-
+    
+    ServiceLocator.sounds_service.play(bullet_info["sound"])
     c_t: CTransform = world.component_for_entity(player_entity, CTransform)
     c_s: CSurface = world.component_for_entity(player_entity, CSurface)
 
