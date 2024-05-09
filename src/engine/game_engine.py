@@ -9,6 +9,7 @@ from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
 from src.ecs.systems.s_rendering import system_rendering
 from src.engine.scenes.scene import Scene
+from src.game.menu_scene import MenuScene
 from src.game.play_scene import PlayScene
 from src.utilities.config_loader import load_config_file
 
@@ -30,6 +31,8 @@ class GameEngine:
         self.bg_color = pygame.Color(t_color['r'], t_color['g'], t_color['b'])
 
         self._scenes: dict[str, Scene] = {"LEVEL_01": PlayScene("assets/cfg/lvls.json", self)}
+        self._scenes["MENU"] = MenuScene(self)
+        
         self._current_scene: Scene = None
         self._scene_name_to_switch: str = None
 
