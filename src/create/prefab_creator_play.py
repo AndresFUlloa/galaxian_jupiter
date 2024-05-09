@@ -5,6 +5,7 @@ import pygame
 import esper
 from src.create.prefab_creator import create_sprite
 from src.ecs.components.c_enemies_stop_motion import CEnemiesStopMotion
+from src.ecs.components.c_enemy_state import CEnemyState
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.engine.service_locator import ServiceLocator
@@ -26,8 +27,9 @@ def create_enemies(world: esper.World, enemies_info: list[dict], vel: pygame.Vec
         for i in range(enemy_info['quantity']['rows']):
             x_pos2 = x_pos
             for j in range(enemy_info['quantity']['columns']):
-                enemy_sprite = create_sprite(world, pygame.Vector2(x_pos2, y_pos), vel, surf, animations=animations)
+                enemy_sprite = create_sprite(world, pygame.Vector2(x_pos2, y_pos), vel.copy(), surf, animations=animations)
                 world.add_component(enemy_sprite, CTagEnemy())
+                world.add_component(enemy_sprite, CEnemyState())
                 x_pos2 += enemy_info["distance"]['x']
             y_pos += enemy_info["distance"]['y']
 
