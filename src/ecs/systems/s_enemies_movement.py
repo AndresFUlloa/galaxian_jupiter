@@ -33,8 +33,11 @@ def system_enemies_movement(world: esper.World, screen: pygame.Surface, delta_ti
         for enemy_entity, (c_t, c_s, c_v, _) in components:
             rect = c_s.area.copy()
             rect.topleft = c_t.pos
-            if rect.right > screen.get_width() - margin or c_t.pos.x < margin:
-                vel = c_v.vel.x * -1
+            if rect.right > screen.get_width() - margin:
+                vel = abs(c_v.vel.x) * -1
+                break
+            elif c_t.pos.x < margin:
+                vel = abs(c_v.vel.x)
                 break
 
         if vel is not None:
