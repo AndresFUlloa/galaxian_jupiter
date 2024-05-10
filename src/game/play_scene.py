@@ -8,9 +8,8 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_player_bullet_w_enemy import system_collision_bullet_enemy
-from src.ecs.systems.s_enemies_bounce import system_enemies_bounce
+from src.ecs.systems.s_enemies_movement import system_enemies_movement
 from src.ecs.systems.s_explosion_time import system_explosion_time
-from src.ecs.systems.s_enemies_stop_motion import system_enemies_stop_motion
 from src.ecs.systems.s_flashing_text import system_flashing_text
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
@@ -72,11 +71,8 @@ class PlayScene(Scene):
             system_flashing_text(self.ecs_world, self.paused_text_entity, 0.5, self._accumulated_time)
         else:
             system_animation(self.ecs_world, delta_time)
-            system_enemies_bounce(
-                self.ecs_world, self.screen, self.window_cfg['enemies_margin'], self._stop_motion_entity)
-            system_enemies_stop_motion(
-                self.ecs_world, self._stop_motion_entity, self.lvl_cfg['time_to_stop'], self.lvl_cfg['stopped_time'],
-                delta_time)
+            system_enemies_movement(self.ecs_world, self.screen, delta_time, self.lvl_cfg['time_to_stop'],
+                                    self.lvl_cfg['stopped_time'],  self.window_cfg['enemies_margin'])
             system_player_boundaries(self.ecs_world, self._player_entity, self.screen, self.window_cfg['player_margin'])
             system_player_bullet_boundaries(self.ecs_world, self.screen)
             system_collision_bullet_enemy(self.ecs_world, self.explosion_cfg)
