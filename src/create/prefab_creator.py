@@ -2,6 +2,7 @@ import pygame
 import esper
 import random
 from src.ecs.components.c_animation import CAnimation
+from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
@@ -74,6 +75,6 @@ def create_stars(world: esper.World, stars_info: dict, screen: pygame.Surface) -
         star_entity = create_square(world, pygame.Vector2(1, 1), pos, vel, color)
         is_visible = random.choice([True, False])
         world.component_for_entity(star_entity, CSurface).is_visible = is_visible
-        world.add_component(star_entity, CTagStar(blink_time))
+        world.add_component(star_entity, CBlink(blink_time))
 
 

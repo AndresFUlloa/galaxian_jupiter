@@ -2,7 +2,8 @@ import pygame
 
 from src.create.prefab_creator import create_player, create_input_player
 from src.create.prefab_creator_interface import create_text, TextAlignment
-from src.create.prefab_creator_play import create_enemies, create_player_bullet, create_enemies_stop_motion
+from src.create.prefab_creator_play import create_enemies, create_player_bullet, create_enemies_stop_motion, \
+    create_paused_text
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_velocity import CVelocity
@@ -10,7 +11,7 @@ from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_player_bullet_w_enemy import system_collision_bullet_enemy
 from src.ecs.systems.s_enemies_movement import system_enemies_movement
 from src.ecs.systems.s_explosion_time import system_explosion_time
-from src.ecs.systems.s_flashing_text import system_flashing_text
+from src.ecs.systems.s_blinking import system_blinking
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
 from src.ecs.systems.s_player_bullet_boundaries import system_player_bullet_boundaries
@@ -34,8 +35,6 @@ class PlayScene(Scene):
         self.enemies_cfg = load_config_file('assets/cfg/enemies.json')
         self._paused = False
 
-        self._accumulated_time = 0.0
-
     def do_create(self):
         super().do_create()
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
@@ -45,31 +44,14 @@ class PlayScene(Scene):
             self.ecs_world, self.lvl_cfg['time_to_stop'], self.lvl_cfg['stopped_time'],
             self.lvl_cfg['enemies_velocity'])
 
-        paused_position = pygame.Vector2(
-            self.screen.get_width() // 2,
-            (self.screen.get_height() // 2 + 30)
-        )
-        self.paused_text_entity = create_text(
-            self.ecs_world, "PAUSED",
-            12,
-            pygame.Color(255, 50, 50),
-            paused_position,
-            TextAlignment.CENTER
-        )
-        self.paused_text_surface = self.ecs_world.component_for_entity(self.paused_text_entity, CSurface)
-        self.paused_text_surface.is_visible = self._paused
-
         create_input_player(self.ecs_world)
         create_enemies(self.ecs_world, self.enemies_cfg, pygame.Vector2(self.lvl_cfg['enemies_velocity'], 0))
 
     def do_update(self, delta_time: float):
         super().do_update(delta_time)
-        self._accumulated_time += delta_time
         system_movement(self.ecs_world, delta_time, self._paused)
 
-        if self._paused:
-            system_flashing_text(self.ecs_world, self.paused_text_entity, 0.5, self._accumulated_time)
-        else:
+        if not self._paused:
             system_animation(self.ecs_world, delta_time)
             system_enemies_movement(self.ecs_world, self.screen, delta_time, self.lvl_cfg['time_to_stop'],
                                     self.lvl_cfg['stopped_time'],  self.window_cfg['enemies_margin'])
@@ -101,5 +83,10 @@ class PlayScene(Scene):
 
         if c_input.name == "PAUSE":
             if c_input.phase == CommandPhase.START:
+                if not self._paused:
+                    self.paused_text_entity = create_paused_text(self.ecs_world, self.screen)
+                else:
+                    self.ecs_world.delete_entity(self.paused_text_entity)
+
                 self._paused = not self._paused
-                self.paused_text_surface.is_visible = self._paused
+
