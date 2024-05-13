@@ -9,6 +9,7 @@ from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
 from src.ecs.systems.s_rendering import system_rendering
 from src.engine.scenes.scene import Scene
+from src.engine.service_locator import ServiceLocator
 from src.game.menu_scene import MenuScene
 from src.game.play_scene import PlayScene
 from src.utilities.config_loader import load_config_file
@@ -21,7 +22,7 @@ class GameEngine:
         t_color = self.window_cfg["bg_color"]
         pygame.init()
         pygame.display.set_caption(self.window_cfg['title'])
-        self.screen = pygame.display.set_mode((screen_size['w'], screen_size['h']), pygame.SCALED) #eliminar el scaled
+        self.screen = pygame.display.set_mode((screen_size['w'], screen_size['h']), pygame.SCALED)  # eliminar el scaled
         self._clock = pygame.time.Clock()
         self.is_running = False
         self._framerate = self.window_cfg['framerate']
@@ -30,17 +31,17 @@ class GameEngine:
         self.ecs_world = esper.World()
         self.bg_color = pygame.Color(t_color['r'], t_color['g'], t_color['b'])
 
-        self._scenes: dict[str, Scene] = {"LEVEL_01": PlayScene("assets/cfg/lvls.json", self)}
-        self._scenes["MENU"] = MenuScene(self)
-        
+        self._scenes: dict[str, Scene] = {
+            "LEVEL_01": PlayScene(self),
+            "MENU": MenuScene(self)}
+
         self._current_scene: Scene = None
         self._scene_name_to_switch: str = None
 
     def _load_config_files(self):
-        self.interface_cfg = load_config_file('assets/cfg/interface.json')
-        self.window_cfg = load_config_file('assets/cfg/window.json')
-        self.player_cfg = load_config_file('assets/cfg/player.json')
-
+        self.interface_cfg = ServiceLocator.jsons_service.get('assets/cfg/interface.json')
+        self.window_cfg = ServiceLocator.jsons_service.get('assets/cfg/window.json')
+        self.player_cfg = ServiceLocator.jsons_service.get('assets/cfg/player.json')
 
     def run(self, star_scene_name: str) -> None:
         self.is_running = True

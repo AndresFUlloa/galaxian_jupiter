@@ -76,5 +76,6 @@ def create_stars(world: esper.World, stars_info: dict, screen: pygame.Surface) -
         is_visible = random.choice([True, False])
         world.component_for_entity(star_entity, CSurface).is_visible = is_visible
         world.add_component(star_entity, CBlink(blink_time))
+        world.add_component(star_entity, CTagStar())
 
 

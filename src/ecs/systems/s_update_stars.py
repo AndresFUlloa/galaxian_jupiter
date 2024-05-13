@@ -6,7 +6,6 @@ from src.ecs.components.tags.c_tag_star import CTagStar
 
 def system_update_stars(world: esper.World, delta_time: float, screen: pygame.Surface):
     components = world.get_components(CTransform, CTagStar, CSurface)
-
     c_t: CTransform
     c_t_s: CTagStar
     c_s: CSurface
