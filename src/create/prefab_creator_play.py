@@ -4,6 +4,8 @@ import pygame
 
 import esper
 from src.create.prefab_creator import create_sprite
+from src.create.prefab_creator_interface import create_text, TextAlignment
+from src.ecs.components.c_blink import CBlink
 from src.ecs.components.c_enemies_stop_motion import CEnemiesStopMotion
 from src.ecs.components.c_enemy_state import CEnemyState
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
@@ -45,8 +47,6 @@ def create_enemies_stop_motion(world: esper.World, time_to_stop: dict, stopped_t
 
 
 def create_player_bullet(world: esper.World, bullet_info: dict, num_bullet: int, player_entity: int):
-    
-    
     if len(world.get_components(CTagPlayerBullet)) >= num_bullet:
         return
     
@@ -77,3 +77,20 @@ def create_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: di
     world.add_component(explosion_entity, CTagExplosion())
     ServiceLocator.sounds_service.play(explosion_info["sound"])
 
+
+def create_paused_text(world: esper.World, screen: pygame.Surface) -> int:
+    paused_position = pygame.Vector2(
+        screen.get_width() // 2,
+        (screen.get_height() // 2 + 30)
+    )
+    entity = create_text(
+        world,
+        "PAUSED",
+        12,
+        pygame.Color(255, 50, 50),
+        paused_position,
+        TextAlignment.CENTER
+    )
+    world.add_component(entity, CBlink(0.5))
+
+    return entity
