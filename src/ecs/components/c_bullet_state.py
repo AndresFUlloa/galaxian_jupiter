@@ -9,3 +9,4 @@ class CBulletState:
 class BulletState(Enum):
     IDLE = 0
     SHOT = 1
+
