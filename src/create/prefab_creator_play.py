@@ -6,8 +6,10 @@ import esper
 from src.create.prefab_creator import create_sprite
 from src.create.prefab_creator_interface import create_text, TextAlignment
 from src.ecs.components.c_blink import CBlink
+from src.ecs.components.c_bullet_state import CBulletState
 from src.ecs.components.c_enemies_stop_motion import CEnemiesStopMotion
 from src.ecs.components.c_enemy_state import CEnemyState
+from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.engine.service_locator import ServiceLocator
@@ -46,26 +48,24 @@ def create_enemies_stop_motion(world: esper.World, time_to_stop: dict, stopped_t
     return stop_motion_entity
 
 
-def create_player_bullet(world: esper.World, bullet_info: dict, num_bullet: int, player_entity: int):
-    if len(world.get_components(CTagPlayerBullet)) >= num_bullet:
-        return
-    
-    ServiceLocator.sounds_service.play(bullet_info["sound"])
+def create_player_bullet(world: esper.World, bullet_info: dict, player_entity: int):
     c_t: CTransform = world.component_for_entity(player_entity, CTransform)
     c_s: CSurface = world.component_for_entity(player_entity, CSurface)
+    c_v: CVelocity = world.component_for_entity(player_entity, CVelocity)
 
     player_rect = c_s.surf.get_rect()
     player_rect.topleft = c_t.pos
     pos = pygame.Vector2(player_rect.midtop)
-    pos.x -= bullet_info["size"]["x"] / 2
-    pos.y -= bullet_info["size"]["y"]
+    pos.x -= bullet_info["size"]["x"] / 2 - 1
+    pos.y -= bullet_info["size"]["y"] - 1
 
     bullet_entity = create_square(world, pygame.Vector2(bullet_info["size"]["x"], bullet_info["size"]["y"]),
-                                  pos, pygame.Vector2(0, -bullet_info["velocity"]),
+                                  pos, c_v.vel.copy(),
                                   pygame.Color(bullet_info["color"]["r"], bullet_info["color"]["g"],
                                                bullet_info["color"]["b"]))
     world.add_component(bullet_entity, CTagPlayerBullet())
-    ServiceLocator.sounds_service.play('assets/snd/player_shoot.ogg')
+    world.add_component(bullet_entity, CBulletState())
+    return bullet_entity
 
 
 def create_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: dict):
