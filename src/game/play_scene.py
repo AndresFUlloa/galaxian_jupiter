@@ -5,6 +5,7 @@ from src.create.prefab_creator_play import create_enemies, create_player_bullet,
     create_paused_text
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.c_play_state import CPlayState
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_player_bullet_w_enemy import system_collision_bullet_enemy
 from src.ecs.systems.s_enemies_movement import system_enemies_movement
@@ -13,11 +14,12 @@ from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
 from src.ecs.systems.s_player_bullet_boundaries import system_player_bullet_boundaries
 from src.ecs.systems.s_shoot_bullet import system_shoot_bullet
-
 from src.ecs.systems.s_charge_bullet import system_charge_bullet
 from src.ecs.systems.s_player_bullet_movement import system_player_bullet_movement
+from src.ecs.systems.s_update_play_state import system_update_play_state
 from src.engine.scenes.scene import Scene
 from src.engine.service_locator import ServiceLocator
+
 
 
 class PlayScene(Scene):
@@ -48,15 +50,18 @@ class PlayScene(Scene):
             self.lvl_cfg['enemies_velocity'])
 
         create_input_player(self.ecs_world)
-        self._bullet_charged = create_player_bullet(self.ecs_world, self.bullets_cfg["player_bullet"],
-                                                    self._player_entity)
-        self._bullet_charged_v = self.ecs_world.component_for_entity(self._bullet_charged, CVelocity)
-        create_enemies(self.ecs_world, self.enemies_cfg, pygame.Vector2(self.lvl_cfg['enemies_velocity'], 0))
+        #self._bullet_charged = create_player_bullet(self.ecs_world, self.bullets_cfg["player_bullet"],
+        #                                            self._player_entity)
+        #self._bullet_charged_v = self.ecs_world.component_for_entity(self._bullet_charged, CVelocity)
+        #create_enemies(self.ecs_world, self.enemies_cfg, pygame.Vector2(self.lvl_cfg['enemies_velocity'], 0))
+        self._play_state_entity = self.ecs_world.create_entity()
+        self.ecs_world.add_component(self._play_state_entity,CPlayState())
 
     def do_update(self, delta_time: float):
         super().do_update(delta_time)
         system_movement(self.ecs_world, delta_time, self._paused)
-
+        system_update_play_state(self.ecs_world, delta_time)
+        """
         if not self._paused:
             system_animation(self.ecs_world, delta_time)
             system_enemies_movement(self.ecs_world, self.screen, delta_time, self.lvl_cfg['time_to_stop'],
@@ -67,6 +72,7 @@ class PlayScene(Scene):
             system_collision_bullet_enemy(self.ecs_world, self.explosion_cfg)
             system_explosion_time(self.ecs_world)
             system_charge_bullet(self.ecs_world, self.bullets_cfg["player_bullet"], self._player_entity)
+        """
 
     def do_clean(self):
         self._paused = False

@@ -46,6 +46,7 @@ def create_player(world: esper.World, player_info: dict) -> int:
     velocity = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, position, velocity, player_surface)
     world.add_component(player_entity, CTagPlayer())
+    world.component_for_entity(player_entity, CSurface).is_visible = False
     return player_entity
 
 
