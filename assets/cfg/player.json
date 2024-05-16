@@ -1,0 +1,9 @@
+{
+  "image": "assets/img/invaders_char.png",
+  "start_pos": {
+    "x": 128,
+    "y": 235
+  },
+  "input_velocity": 50, 
+  "num_bullet": 1
+}

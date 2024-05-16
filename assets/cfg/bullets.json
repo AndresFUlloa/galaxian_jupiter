@@ -1,0 +1,27 @@
+{"player_bullet":{
+    "size": {
+    "x":1,
+    "y":4
+    },
+    "velocity":200,
+    "color":{
+        "r":255,
+        "g":255,
+        "b":255
+    },
+    "sound": "assets/snd/player_shoot.ogg"
+},
+"enemy_bullet":{
+    "size": {
+        "x":1,
+        "y":2
+        },
+        "velocity":100,
+        "color":{
+            "r":254,
+            "g":248,
+            "b":149
+        }
+}
+
+}
