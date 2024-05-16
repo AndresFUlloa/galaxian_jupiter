@@ -9,7 +9,6 @@ def system_movement(world: esper.World, delta_time: float, paused: bool):
 
     c_v: CVelocity
     c_t: CTransform
-
     for entity, (c_v, c_t) in components:
         if not paused or world.has_component(entity, CTagStar):
             c_t.pos.x += c_v.vel.x * delta_time

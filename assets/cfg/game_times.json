@@ -1,0 +1,6 @@
+{
+    "ready_time_init": 0.5,
+    "ready_time_enemy" : 1.5,
+    "ready_time_off" : 2.5,
+    "ready_time_player" : 3.5
+}
