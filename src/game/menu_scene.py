@@ -1,4 +1,3 @@
-
 import pygame
 from src.create.prefab_creator_interface import TextAlignment
 from src.create.prefab_creator_menu import add_menu_images, create_menu_texts
@@ -8,7 +7,7 @@ from src.engine.scenes.scene import Scene
 
 
 class MenuScene(Scene):
-    def __init__(self,engine: 'src.engine.game_engine') -> None:
+    def __init__(self, engine: 'src.engine.game_engine') -> None:
         super().__init__(engine)
         self.screen = engine.screen
         self.window_cfg = engine.window_cfg
@@ -34,7 +33,3 @@ class MenuScene(Scene):
             if c_input.phase == CommandPhase.START:
                 # change scene
                 self.switch_scene("LEVEL_01")
-
-            
-                
-
