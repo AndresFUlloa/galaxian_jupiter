@@ -1,18 +1,117 @@
-{
-    "title_text_color": {
-        "r": 255,
-        "g": 0,
-        "b": 0
+[
+    {
+        "text": "1UP",
+        "color": {
+            "r": 255,
+            "g": 50,
+            "b": 0
+        },
+        "position": {
+            "x": 50,
+            "y": 10
+        },
+        "size": 8,
+        "text_alignment": "LEFT"
+
     },
-    "normal_text_color": {
-        "r": 255,
-        "g": 255,
-        "b": 255
+    {
+        "text": "HI-SCORE",
+        "color": {
+            "r": 255,
+            "g": 50,
+            "b": 50
+        },
+        "position": {
+            "x": 100,
+            "y": 10
+        },
+        "size": 8,
+        "text_alignment": "LEFT"
+
     },
-    "high_score_color": {
-        "r": 30,
-        "g": 144,
-        "b": 255
+    {
+        "text": "00",
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "position": {
+            "x": 65,
+            "y": 20
+        },
+        "size": 8,
+        "text_alignment": "LEFT"
+
     },
-    "high_score_max_value": 1000
-}
+    {
+        "text": "JUPITER GALAXIAN",
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "position": {
+            "x": 120,
+            "y": 80
+        },
+        "size": 8,
+        "text_alignment": "CENTER"
+    },
+    {
+        "text": "1 PLAYER",
+        "color": {
+            "r": 180,
+            "g": 119,
+            "b": 252
+        },
+        "position": {
+            "x": 120,
+            "y": 108
+        },
+        "size": 8,
+        "text_alignment": "CENTER"
+    },
+    {
+        "text": "NAMCOT",
+        "color": {
+            "r": 255,
+            "g": 50,
+            "b": 50
+        },
+        "position": {
+            "x": 120,
+            "y": 178
+        },
+        "size": 8,
+        "text_alignment": "CENTER"
+    },
+    {
+        "text": "©1979  1984 NAMCO LTD.",
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "position": {
+            "x": 120,
+            "y": 198
+        },
+        "size": 8,
+        "text_alignment": "CENTER"
+    },
+    {
+        "text": "ALL RIGHTS RESERVED",
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "position": {
+            "x": 120,
+            "y": 208
+        },
+        "size": 8,
+        "text_alignment": "CENTER"
+    }
+]
