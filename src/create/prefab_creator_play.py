@@ -10,6 +10,7 @@ from src.ecs.components.c_bullet_state import CBulletState
 from src.ecs.components.c_enemies_stop_motion import CEnemiesStopMotion
 from src.ecs.components.c_enemy_state import CEnemyState
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_emeny_bullet import CTagEnemyBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.engine.service_locator import ServiceLocator
@@ -65,6 +66,26 @@ def create_player_bullet(world: esper.World, bullet_info: dict, player_entity: i
                                   pygame.Color(bullet_info["color"]["r"], bullet_info["color"]["g"],
                                                bullet_info["color"]["b"]))
     world.add_component(bullet_entity, CTagPlayerBullet())
+    world.add_component(bullet_entity, CBulletState())
+    return bullet_entity
+
+
+def create_enemy_bullet(world: esper.World, bullet_info: dict, enemy_entity: int):
+    c_t: CTransform = world.component_for_entity(enemy_entity, CTransform)
+    c_s: CSurface = world.component_for_entity(enemy_entity, CSurface)
+    c_v: CVelocity = world.component_for_entity(enemy_entity, CVelocity)
+
+    enemy_rect = c_s.surf.get_rect()
+    enemy_rect.topleft = c_t.pos
+    pos = pygame.Vector2(enemy_rect.midbottom)
+    pos.x -= bullet_info["size"]["x"] / 2 - 1
+    pos.y -= bullet_info["size"]["y"] - 1
+
+    bullet_entity = create_square(world, pygame.Vector2(bullet_info["size"]["x"], bullet_info["size"]["y"]),
+                                  pos, c_v.vel.copy(),
+                                  pygame.Color(bullet_info["color"]["r"], bullet_info["color"]["g"],
+                                               bullet_info["color"]["b"]))
+    world.add_component(bullet_entity, CTagEnemyBullet())
     world.add_component(bullet_entity, CBulletState())
     return bullet_entity
 

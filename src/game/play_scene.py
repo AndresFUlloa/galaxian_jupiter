@@ -9,6 +9,7 @@ from src.ecs.components.c_play_state import CPlayState, PlayState
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_player_bullet_w_enemy import system_collision_bullet_enemy
 from src.ecs.systems.s_enemies_movement import system_enemies_movement
+from src.ecs.systems.s_enemy_shooting import enemy_shooting_system
 from src.ecs.systems.s_explosion_time import system_explosion_time
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
@@ -60,6 +61,7 @@ class PlayScene(Scene):
     def do_update(self, delta_time: float):
         super().do_update(delta_time)
         system_update_play_state(self.ecs_world, delta_time, self.screen)
+        enemy_shooting_system(self.ecs_world,self._accumulated_time,self.bullets_cfg['player_bullet'])
 
     def do_clean(self):
         self._paused = False
