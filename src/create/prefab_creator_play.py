@@ -79,9 +79,9 @@ def create_enemy_bullet(world: esper.World, bullet_info: dict, enemy_entity: int
     #c_v: CVelocity = world.component_for_entity(enemy_entity, CVelocity)
     c_t_p = world.component_for_entity(player_entity, CTransform)
     
-    enemy_rect = c_s.surf.get_rect()
-    enemy_rect.topleft = c_t.pos
+    enemy_rect = CSurface.get_area_relative(c_s.area,c_t.pos)
     pos = pygame.Vector2(enemy_rect.midbottom)
+    
     c_v= pygame.Vector2(c_t_p.pos.copy().x - c_t.pos.x,c_t_p.pos.copy().y - c_t.pos.y)
     c_v.scale_to_length(50)
     bullet_entity = create_square(world, pygame.Vector2(bullet_info["size"]["x"], bullet_info["size"]["y"]),
@@ -94,6 +94,15 @@ def create_enemy_bullet(world: esper.World, bullet_info: dict, enemy_entity: int
 
 
 def create_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: dict):
+    explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
+    pos = pygame.Vector2(pos.x,
+                         pos.y)
+    vel = pygame.Vector2(0, 0)
+    explosion_entity = create_sprite(world, pos, vel, explosion_surface, animations=explosion_info['animations'])
+    world.add_component(explosion_entity, CTagExplosion())
+    ServiceLocator.sounds_service.play(explosion_info["sound"])
+
+def create_player_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: dict):
     explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
     pos = pygame.Vector2(pos.x,
                          pos.y)

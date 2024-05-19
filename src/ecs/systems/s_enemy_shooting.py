@@ -13,7 +13,7 @@ def system_enemy_shooting(world:esper.World,acumulated_time: float,bullet_info:d
     interval = 5
     # si se cumple el intervalo haga que un enemigo dispare
     bala = world.get_component(CTagEnemyBullet) 
-    print(bala)
+  
     if  (not (int(acumulated_time / interval) % 2 ==0)) and len(bala) ==0 :
         components  = world.get_components(CTransform,CTagEnemy)
         player =  world.get_component(CTagPlayer)[0][0]
