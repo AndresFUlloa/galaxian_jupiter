@@ -1,5 +1,6 @@
 import esper, pygame
 from src.ecs.components.c_play_state import CPlayState, PlayState
+from src.ecs.components.tags.c_tag_life import CTagLife
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_charge_bullet import system_charge_bullet
@@ -43,6 +44,7 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
 
         player_entity = world.get_component(CTagPlayer)[0][0]
         world.component_for_entity(player_entity, CSurface).is_visible = True
+        _subtract_lives(world)
         create_player_bullet(
             world, ServiceLocator.jsons_service.get("assets/cfg/bullets.json")['player_bullet'], player_entity)
         _change_enemies_velocity(world, ServiceLocator.jsons_service.get(
@@ -64,3 +66,15 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         system_collision_bullet_enemy(world, explosion_cfg)
         system_explosion_time(world)
         system_charge_bullet(world, bullets_cfg["player_bullet"], player_entity)
+
+
+def _subtract_lives(world: esper.World):
+    world.get_component(CTagPlayer)[0][1].lives -= 1
+
+    lives = world.get_components(CTagLife)
+
+    if len(lives) == 0:
+        return
+
+    world.delete_entity(lives[-1][0])
+

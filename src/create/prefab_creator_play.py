@@ -12,6 +12,9 @@ from src.ecs.components.c_enemy_state import CEnemyState
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
+from src.ecs.components.tags.c_tag_level_flag import CTagLevelFlag
+from src.ecs.components.tags.c_tag_life import CTagLife
+from src.ecs.components.tags.c_tag_score import CTagScore
 from src.engine.service_locator import ServiceLocator
 from src.create.prefab_creator import create_square
 from src.ecs.components.c_surface import CSurface
@@ -33,7 +36,7 @@ def create_enemies(world: esper.World, enemies_info: list[dict]):
             x_pos2 = x_pos
             for j in range(enemy_info['quantity']['columns']):
                 enemy_sprite = create_sprite(world, pygame.Vector2(x_pos2, y_pos), pygame.Vector2(0,0), surf, animations=animations)
-                world.add_component(enemy_sprite, CTagEnemy())
+                world.add_component(enemy_sprite, CTagEnemy(enemy_info["points"]))
                 world.add_component(enemy_sprite, CEnemyState())
                 x_pos2 += enemy_info["distance"]['x']
             y_pos += enemy_info["distance"]['y']
@@ -95,3 +98,63 @@ def create_paused_text(world: esper.World, screen: pygame.Surface) -> int:
     world.add_component(entity, CBlink(0.5))
 
     return entity
+
+
+def create_header(world: esper.World, level_info: dict, player_info: dict):
+    header_pos_y = 10
+    header_value_pos_y = 20
+
+    create_text(
+        world,
+        "1UP",
+        8,
+        pygame.Color(255, 50, 50),
+        pygame.Vector2(50, header_pos_y),
+        TextAlignment.LEFT
+    )
+    current_score_text = create_text(
+        world,
+        "00",
+        8,
+        pygame.Color(255, 255, 255),
+        pygame.Vector2(65, header_value_pos_y),
+        TextAlignment.LEFT
+    )
+    world.add_component(current_score_text, CTagScore())
+
+    create_text(
+        world, "HI-SCORE",
+        8, pygame.Color(255, 50, 50),
+        pygame.Vector2(100, header_pos_y),
+        TextAlignment.LEFT
+    )
+    create_text(
+        world,
+        "5000",
+        8,
+        pygame.Color(0, 113, 239),
+        pygame.Vector2(125, header_value_pos_y),
+        TextAlignment.LEFT
+    )
+
+    flag_surface = ServiceLocator.images_service.get(level_info['flag']['image'])
+    flag_position = pygame.Vector2(
+        level_info['flag']['position']['x'],
+        level_info['flag']['position']['y']
+    )
+
+    flag_entity = create_sprite(world, flag_position, pygame.Vector2(0, 0), flag_surface)
+    world.add_component(flag_entity, CTagLevelFlag())
+
+    life_surface = ServiceLocator.images_service.get(level_info['life']['image'])
+
+    for i in range(player_info['lives']):
+        pos_x = level_info['life']['position']['x'] + life_surface.get_width() * i
+
+        life_position = pygame.Vector2(
+            pos_x + i,
+            level_info['life']['position']['y']
+        )
+        life_entity = create_sprite(world, life_position, pygame.Vector2(0, 0), life_surface)
+        world.add_component(life_entity, CTagLife())
+
