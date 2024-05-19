@@ -5,6 +5,7 @@
       "y": 40,
       "x": 78
     },
+    "points": 60,
     "quantity": {
       "rows": 1,
       "columns": 2
@@ -21,6 +22,7 @@
       "y": 55,
       "x": 57
     },
+    "points": 50,
     "quantity": {
       "rows": 1,
       "columns": 6
@@ -54,6 +56,7 @@
       "y": 70,
       "x": 42
     },
+    "points": 40,
     "quantity": {
       "rows": 1,
       "columns": 8
@@ -87,6 +90,7 @@
       "y": 85,
       "x": 20
     },
+    "points": 30,
     "quantity": {
       "rows": 3,
       "columns": 10
@@ -113,5 +117,4 @@
       ]
     }
   }
-
 ]

@@ -45,7 +45,7 @@ def create_player(world: esper.World, player_info: dict) -> int:
         player_info['start_pos']['x'] - player_size[0] / 2, player_info['start_pos']['y'] - player_size[1])
     velocity = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, position, velocity, player_surface)
-    world.add_component(player_entity, CTagPlayer())
+    world.add_component(player_entity, CTagPlayer(player_info['lives']))
     world.component_for_entity(player_entity, CSurface).is_visible = False
     return player_entity
 
