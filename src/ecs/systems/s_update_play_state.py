@@ -6,6 +6,7 @@ from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_charge_bullet import system_charge_bullet
 from src.ecs.systems.s_collision_player_bullet_w_enemy import system_collision_bullet_enemy
 from src.ecs.systems.s_enemies_movement import _change_enemies_velocity, system_enemies_movement
+from src.ecs.systems.s_enemy_shooting import  system_enemy_shooting
 from src.ecs.systems.s_explosion_time import system_explosion_time
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
 from src.ecs.systems.s_player_bullet_boundaries import system_player_bullet_boundaries
@@ -66,6 +67,7 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         system_collision_bullet_enemy(world, explosion_cfg)
         system_explosion_time(world)
         system_charge_bullet(world, bullets_cfg["player_bullet"], player_entity)
+        system_enemy_shooting(world,c_p_s.current_time,bullets_cfg['player_bullet'])
 
 
 def _subtract_lives(world: esper.World):

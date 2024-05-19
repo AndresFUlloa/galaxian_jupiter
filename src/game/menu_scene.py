@@ -3,7 +3,7 @@ from src.create.prefab_creator_interface import TextAlignment
 from src.create.prefab_creator_menu import add_menu_images, create_menu_texts
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_menu_state import CMenuState, MenuState
-from src.ecs.systems.s_enemy_shooting import enemy_shooting_system
+
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_movement_text_menu import system_text_movement, system_text_end_movement
 from src.engine.scenes.scene import Scene
