@@ -10,6 +10,7 @@ from src.ecs.components.c_bullet_state import CBulletState
 from src.ecs.components.c_enemies_stop_motion import CEnemiesStopMotion
 from src.ecs.components.c_enemy_state import CEnemyState
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_emeny_bullet import CTagEnemyBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.ecs.components.tags.c_tag_level_flag import CTagLevelFlag
@@ -72,7 +73,36 @@ def create_player_bullet(world: esper.World, bullet_info: dict, player_entity: i
     return bullet_entity
 
 
+def create_enemy_bullet(world: esper.World, bullet_info: dict, enemy_entity: int,player_entity:int):
+    c_t: CTransform = world.component_for_entity(enemy_entity, CTransform)
+    c_s: CSurface = world.component_for_entity(enemy_entity, CSurface)
+    #c_v: CVelocity = world.component_for_entity(enemy_entity, CVelocity)
+    c_t_p = world.component_for_entity(player_entity, CTransform)
+    
+    enemy_rect = CSurface.get_area_relative(c_s.area,c_t.pos)
+    pos = pygame.Vector2(enemy_rect.midbottom)
+    
+    c_v= pygame.Vector2(c_t_p.pos.copy().x - c_t.pos.x,c_t_p.pos.copy().y - c_t.pos.y)
+    c_v.scale_to_length(50)
+    bullet_entity = create_square(world, pygame.Vector2(bullet_info["size"]["x"], bullet_info["size"]["y"]),
+                                  pos, c_v,
+                                  pygame.Color(bullet_info["color"]["r"], bullet_info["color"]["g"],
+                                               bullet_info["color"]["b"]))
+    world.add_component(bullet_entity, CTagEnemyBullet())
+    world.add_component(bullet_entity, CBulletState())
+    return bullet_entity
+
+
 def create_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: dict):
+    explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
+    pos = pygame.Vector2(pos.x,
+                         pos.y)
+    vel = pygame.Vector2(0, 0)
+    explosion_entity = create_sprite(world, pos, vel, explosion_surface, animations=explosion_info['animations'])
+    world.add_component(explosion_entity, CTagExplosion())
+    ServiceLocator.sounds_service.play(explosion_info["sound"])
+
+def create_player_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: dict):
     explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
     pos = pygame.Vector2(pos.x,
                          pos.y)
