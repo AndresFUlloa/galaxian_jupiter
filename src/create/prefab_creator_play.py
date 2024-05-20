@@ -1,5 +1,5 @@
 import random
-
+from typing import Optional
 import pygame
 
 import esper
@@ -13,6 +13,7 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_emeny_bullet import CTagEnemyBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
+from src.ecs.components.tags.c_tag_level_counter import CTagLevelCounter
 from src.ecs.components.tags.c_tag_level_flag import CTagLevelFlag
 from src.ecs.components.tags.c_tag_life import CTagLife
 from src.ecs.components.tags.c_tag_score import CTagScore
@@ -24,7 +25,6 @@ from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 
 
 def create_enemies(world: esper.World, enemies_info: list[dict]):
-
     for enemy_info in enemies_info:
         animations: dict = None
         surf = ServiceLocator.images_service.get(enemy_info['image'])
@@ -36,7 +36,8 @@ def create_enemies(world: esper.World, enemies_info: list[dict]):
         for i in range(enemy_info['quantity']['rows']):
             x_pos2 = x_pos
             for j in range(enemy_info['quantity']['columns']):
-                enemy_sprite = create_sprite(world, pygame.Vector2(x_pos2, y_pos), pygame.Vector2(0,0), surf, animations=animations)
+                enemy_sprite = create_sprite(world, pygame.Vector2(x_pos2, y_pos), pygame.Vector2(0, 0), surf,
+                                             animations=animations)
                 world.add_component(enemy_sprite, CTagEnemy(enemy_info["points"]))
                 world.add_component(enemy_sprite, CEnemyState())
                 x_pos2 += enemy_info["distance"]['x']
@@ -73,16 +74,16 @@ def create_player_bullet(world: esper.World, bullet_info: dict, player_entity: i
     return bullet_entity
 
 
-def create_enemy_bullet(world: esper.World, bullet_info: dict, enemy_entity: int,player_entity:int):
+def create_enemy_bullet(world: esper.World, bullet_info: dict, enemy_entity: int, player_entity: int):
     c_t: CTransform = world.component_for_entity(enemy_entity, CTransform)
     c_s: CSurface = world.component_for_entity(enemy_entity, CSurface)
     #c_v: CVelocity = world.component_for_entity(enemy_entity, CVelocity)
     c_t_p = world.component_for_entity(player_entity, CTransform)
-    
-    enemy_rect = CSurface.get_area_relative(c_s.area,c_t.pos)
+
+    enemy_rect = CSurface.get_area_relative(c_s.area, c_t.pos)
     pos = pygame.Vector2(enemy_rect.midbottom)
-    
-    c_v= pygame.Vector2(c_t_p.pos.copy().x - c_t.pos.x,c_t_p.pos.copy().y - c_t.pos.y)
+
+    c_v = pygame.Vector2(c_t_p.pos.copy().x - c_t.pos.x, c_t_p.pos.copy().y - c_t.pos.y)
     c_v.scale_to_length(50)
     bullet_entity = create_square(world, pygame.Vector2(bullet_info["size"]["x"], bullet_info["size"]["y"]),
                                   pos, c_v,
@@ -101,6 +102,7 @@ def create_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: di
     explosion_entity = create_sprite(world, pos, vel, explosion_surface, animations=explosion_info['animations'])
     world.add_component(explosion_entity, CTagExplosion())
     ServiceLocator.sounds_service.play(explosion_info["sound"])
+
 
 def create_player_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: dict):
     explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
@@ -167,14 +169,7 @@ def create_header(world: esper.World, level_info: dict, player_info: dict):
         TextAlignment.LEFT
     )
 
-    flag_surface = ServiceLocator.images_service.get(level_info['flag']['image'])
-    flag_position = pygame.Vector2(
-        level_info['flag']['position']['x'],
-        level_info['flag']['position']['y']
-    )
-
-    flag_entity = create_sprite(world, flag_position, pygame.Vector2(0, 0), flag_surface)
-    world.add_component(flag_entity, CTagLevelFlag())
+    flag_entity = create_flag(world, level_info)
 
     life_surface = ServiceLocator.images_service.get(level_info['life']['image'])
 
@@ -188,3 +183,34 @@ def create_header(world: esper.World, level_info: dict, player_info: dict):
         life_entity = create_sprite(world, life_position, pygame.Vector2(0, 0), life_surface)
         world.add_component(life_entity, CTagLife())
 
+    flag_surface = world.component_for_entity(flag_entity, CSurface)
+    flag_transform = world.component_for_entity(flag_entity, CTransform)
+    counter_text_position = pygame.Vector2(
+        flag_transform.pos.x + flag_surface.surf.get_width(),
+        flag_transform.pos.y
+    )
+
+    counter_text_entity = create_text(
+        world,
+        "05",
+        8,
+        pygame.Color(255, 255, 255),
+        counter_text_position,
+        TextAlignment.LEFT
+    )
+    world.add_component(counter_text_entity, CTagLevelCounter())
+    counter_text_surface = world.component_for_entity(counter_text_entity, CSurface)
+    counter_text_surface.is_visible = False
+
+
+def create_flag(world: esper.World, level_info: dict, position: Optional[pygame.Vector2] = None) -> int:
+    flag_surface = ServiceLocator.images_service.get(level_info['flag']['image'])
+    flag_position = position if position is not None else pygame.Vector2(
+        level_info['flag']['position']['x'],
+        level_info['flag']['position']['y']
+    )
+
+    flag_entity = create_sprite(world, flag_position, pygame.Vector2(0, 0), flag_surface)
+    world.add_component(flag_entity, CTagLevelFlag())
+
+    return flag_entity
