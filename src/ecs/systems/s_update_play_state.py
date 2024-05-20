@@ -9,6 +9,7 @@ from src.ecs.systems.s_collition_enemy_bullet_w_player import system_collision_b
 from src.ecs.systems.s_enemies_movement import _change_enemies_velocity, system_enemies_movement
 from src.ecs.systems.s_enemy_shooting import  system_enemy_shooting
 from src.ecs.systems.s_explosion_time import system_explosion_time
+from src.ecs.systems.s_level_change import system_level_change
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
 from src.ecs.systems.s_player_bullet_boundaries import system_player_bullet_boundaries
 from src.engine.service_locator import ServiceLocator
@@ -20,7 +21,7 @@ from src.create.prefab_creator_play import create_enemies, create_player_bullet
 from src.ecs.components.c_surface import CSurface
 
 
-def system_update_play_state(world: esper.World, delta_time: float, screen: pygame.Surface):
+def system_update_play_state(world: esper.World, delta_time: float, screen: pygame.Surface, level_info: dict, accumulated_time):
     
     
     
@@ -76,6 +77,7 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         system_explosion_time(world)
         system_charge_bullet(world, bullets_cfg["player_bullet"], player_entity)
         system_enemy_shooting(world,c_p_s.current_time,bullets_cfg['player_bullet'])
+        system_level_change(world, level_info, accumulated_time)
     if c_p_s.state == PlayState.GAME_OVER:
         ready_entity = create_text(world, "GAME OVER", 14, pygame.Color(234, 61, 1), pygame.Vector2(128, 100),
                                            TextAlignment.CENTER)

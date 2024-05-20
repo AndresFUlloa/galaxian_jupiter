@@ -1,16 +1,21 @@
 import pygame
 
 from src.create.prefab_creator import create_player, create_input_player
+from src.create.prefab_creator_interface import create_text, TextAlignment
 from src.create.prefab_creator_play import create_enemies, create_player_bullet, create_enemies_stop_motion, \
     create_paused_text, create_header
+from src.create.prefab_debug import create_debug_input
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
+from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_play_state import CPlayState, PlayState
+from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_player_bullet_w_enemy import system_collision_bullet_enemy
 from src.ecs.systems.s_enemies_movement import system_enemies_movement
 
 from src.ecs.systems.s_explosion_time import system_explosion_time
+from src.ecs.systems.s_level_change import system_level_change
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
 from src.ecs.systems.s_player_bullet_boundaries import system_player_bullet_boundaries
@@ -32,6 +37,8 @@ class PlayScene(Scene):
         self.current_lvl = 0
         self.lvl_cfg = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')[self.current_lvl]
         self._paused = False
+        self._editor_mode = False
+        self.debug_text_surface = None
 
     def load_files(self):
         super().load_files()
@@ -43,6 +50,17 @@ class PlayScene(Scene):
 
     def do_create(self):
         super().do_create()
+        debug_text_ent = create_text(
+            self.ecs_world,
+            "[DEBUG MODE]",
+            8,
+            pygame.Color(51, 255, 51),
+            pygame.Vector2(0, 0),
+            TextAlignment.LEFT
+        )
+        self.debug_text_surface = self.ecs_world.component_for_entity(debug_text_ent, CSurface)
+        self.debug_text_surface.is_visible = self._editor_mode
+
         self._player_entity = create_player(self.ecs_world, self.player_cfg)
         create_header(self.ecs_world, self.level_cfg, self.player_cfg)
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
@@ -52,6 +70,7 @@ class PlayScene(Scene):
             self.lvl_cfg['enemies_velocity'])
 
         create_input_player(self.ecs_world)
+        create_debug_input(self.ecs_world)
         # self._bullet_charged = create_player_bullet(self.ecs_world, self.bullets_cfg["player_bullet"],
         #                                            self._player_entity)
         # self._bullet_charged_v = self.ecs_world.component_for_entity(self._bullet_charged, CVelocity)
@@ -61,8 +80,13 @@ class PlayScene(Scene):
 
     def do_update(self, delta_time: float):
         super().do_update(delta_time)
-        system_update_play_state(self.ecs_world, delta_time, self.screen)
-        
+        system_update_play_state(
+            self.ecs_world,
+            delta_time,
+            self.screen,
+            self.level_cfg,
+            self._accumulated_time
+        )
 
     def do_clean(self):
         self._paused = False
@@ -85,3 +109,17 @@ class PlayScene(Scene):
                     self.ecs_world.delete_entity(self.paused_text_entity)
 
                 c_p_s.state = PlayState.PAUSE if c_p_s.state == PlayState.PLAY else PlayState.PLAY
+
+        if c_input.name == "TOGGLE_EDITOR":
+            if c_input.phase == CommandPhase.START:
+                self._editor_mode = not self._editor_mode
+                self.debug_text_surface.is_visible = self._editor_mode
+
+        if self._editor_mode:
+            self._do_editor_action(c_input)
+
+    def _do_editor_action(self, action: CInputCommand):
+        if action.name == "KILL_ALL":
+            components = self.ecs_world.get_components(CTagEnemy)
+            for entity, _ in components:
+                self.ecs_world.delete_entity(entity)
