@@ -34,11 +34,18 @@ class PlayScene(Scene):
         self.paused_text_surface = None
         self.screen = engine.screen
         self.window_cfg = engine.window_cfg
-        self.current_lvl = 0
-        self.lvl_cfg = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')[self.current_lvl]
+        self.current_lvl = 1
+        self.lvl_cfg = self._get_level_at_index_or_last(self.current_lvl - 1)
         self._paused = False
         self._editor_mode = False
         self.debug_text_surface = None
+
+    def _get_level_at_index_or_last(self, index: int):
+        levels = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')
+        try:
+            return levels[index]
+        except IndexError:
+            return self.lvl_cfg[-1]
 
     def load_files(self):
         super().load_files()
@@ -85,6 +92,7 @@ class PlayScene(Scene):
             delta_time,
             self.screen,
             self.level_cfg,
+            self.lvl_cfg,
             self._accumulated_time
         )
 

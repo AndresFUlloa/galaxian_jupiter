@@ -5,7 +5,8 @@ class CPlayState:
     def __init__(self) -> None:
         self.state = PlayState.START
         self.current_time = 0.0
-        self.current_lvl = 0
+        self.current_lvl = 1
+
 
 class PlayState(Enum):
     START = 0

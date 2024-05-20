@@ -9,5 +9,16 @@
       "min": 0.05,
       "max": 0.1
     }
+  },
+  {
+    "enemies_velocity": 25,
+    "time_to_stop": {
+      "min": 0.5,
+      "max": 1
+    },
+    "stopped_time": {
+      "min": 0.05,
+      "max": 0.1
+    }
   }
 ]

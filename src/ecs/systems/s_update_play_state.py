@@ -21,7 +21,7 @@ from src.create.prefab_creator_play import create_enemies, create_player_bullet
 from src.ecs.components.c_surface import CSurface
 
 
-def system_update_play_state(world: esper.World, delta_time: float, screen: pygame.Surface, level_info: dict, accumulated_time):
+def system_update_play_state(world: esper.World, delta_time: float, screen: pygame.Surface, level_info: dict, lvl_cfg: dict, accumulated_time):
     
     
     
@@ -55,12 +55,13 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         world.component_for_entity(player_entity, CSurface).is_visible = True
         #_subtract_lives(world)
         create_player_bullet(
-            world, ServiceLocator.jsons_service.get("assets/cfg/bullets.json")['player_bullet'], player_entity)
-        _change_enemies_velocity(world, ServiceLocator.jsons_service.get(
-            'assets/cfg/lvls.json')[c_p_s.current_lvl]['enemies_velocity'])
+            world,
+            ServiceLocator.jsons_service.get("assets/cfg/bullets.json")['player_bullet'],
+            player_entity
+        )
+        _change_enemies_velocity(world, lvl_cfg['enemies_velocity'])
         c_p_s.state = PlayState.PLAY
     if c_p_s.state == PlayState.PLAY:
-        lvl_cfg = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')[c_p_s.current_lvl]
         window_cfg = ServiceLocator.jsons_service.get('assets/cfg/window.json')
         explosion_cfg = ServiceLocator.jsons_service.get('assets/cfg/explosion.json')
         player_explosion_cfg = ServiceLocator.jsons_service.get('assets/cfg/player_explosion.json')
