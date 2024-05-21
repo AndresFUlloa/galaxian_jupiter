@@ -13,6 +13,7 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_emeny_bullet import CTagEnemyBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
+from src.ecs.components.tags.c_tag_game_over_char import CTagGameOverChar
 from src.ecs.components.tags.c_tag_level_counter import CTagLevelCounter
 from src.ecs.components.tags.c_tag_level_flag import CTagLevelFlag
 from src.ecs.components.tags.c_tag_life import CTagLife
@@ -77,7 +78,7 @@ def create_player_bullet(world: esper.World, bullet_info: dict, player_entity: i
 def create_enemy_bullet(world: esper.World, bullet_info: dict, enemy_entity: int, player_entity: int):
     c_t: CTransform = world.component_for_entity(enemy_entity, CTransform)
     c_s: CSurface = world.component_for_entity(enemy_entity, CSurface)
-    #c_v: CVelocity = world.component_for_entity(enemy_entity, CVelocity)
+    # c_v: CVelocity = world.component_for_entity(enemy_entity, CVelocity)
     c_t_p = world.component_for_entity(player_entity, CTransform)
 
     enemy_rect = CSurface.get_area_relative(c_s.area, c_t.pos)
@@ -216,3 +217,19 @@ def create_flag(world: esper.World, level_info: dict, position: Optional[pygame.
     world.add_component(flag_entity, CTagLevelFlag())
 
     return flag_entity
+
+
+def create_game_over(world: esper.World):
+    game_over_cfg = ServiceLocator.jsons_service.get('assets/cfg/game_over_interface.json')
+    for char_dict in game_over_cfg['characters']:
+        col = pygame.Color(char_dict['color']['r'], char_dict['color']['g'], char_dict['color']['b'])
+        initial_pos = pygame.Vector2(char_dict['initial_pos']['x'], char_dict['initial_pos']['y'])
+        final_pos = pygame.Vector2(char_dict['final_pos']['x'], char_dict['final_pos']['y'])
+        direction_vector = initial_pos - final_pos
+        direction_vector.scale_to_length(game_over_cfg['distance'])
+        initial_pos = final_pos + direction_vector
+        char_entity = create_text(world, char_dict["character"], char_dict["size"], col, initial_pos, TextAlignment.LEFT)
+        vel = pygame.Vector2(final_pos.x - initial_pos.x, final_pos.y - initial_pos.y)
+        vel.scale_to_length(game_over_cfg['velocity'])
+        world.add_component(char_entity, CVelocity(vel))
+        world.add_component(char_entity, CTagGameOverChar(final_pos))
