@@ -1,30 +1,30 @@
-
 import esper
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_bullet_state import CBulletState, BulletState
+from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_play_state import CPlayState, PlayState
 
 
-def system_player_bullet_movement(world: esper.World, c_input: CInputCommand, input_velocity: int, player_entity: int):
+def system_player_bullet_movement(world: esper.World, c_input: CInputCommand, player_entity: int):
     if c_input.name not in ["PLAYER_LEFT", "PLAYER_RIGHT"]:
         return
 
-        
+    c_t_p = world.component_for_entity(player_entity, CTagPlayer)
     if world.get_component(CPlayState)[0][1].state != PlayState.PLAY:
         return
-    direction = 1 if c_input.name == "PLAYER_RIGHT" else -1
-    c_v_p = world.component_for_entity(player_entity, CVelocity)
-    bullet_entity = _search_charged_bullet(world)
-    c_v_b = world.component_for_entity(bullet_entity, CVelocity) if bullet_entity is not None else None
 
     if c_input.phase == CommandPhase.START:
-        c_v_p.vel.x += direction * input_velocity
-        _update_bullet_velocity(c_v_b, direction * input_velocity)
+        if c_input.name == "PLAYER_RIGHT":
+            c_t_p.right = True
+        else:
+            c_t_p.left = True
     elif c_input.phase == CommandPhase.END:
-        c_v_p.vel.x -= direction * input_velocity
-        _update_bullet_velocity(c_v_b, -direction * input_velocity)
+        if c_input.name == "PLAYER_RIGHT":
+            c_t_p.right = False
+        else:
+            c_t_p.left = False
 
 
 def _search_charged_bullet(world: esper.World):

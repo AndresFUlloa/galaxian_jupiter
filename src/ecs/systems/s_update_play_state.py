@@ -15,6 +15,7 @@ from src.ecs.systems.s_explosion_time import system_explosion_time
 from src.ecs.systems.s_level_change import system_level_change
 from src.ecs.systems.s_player_boundaries import system_player_boundaries
 from src.ecs.systems.s_player_bullet_boundaries import system_player_bullet_boundaries
+from src.ecs.systems.s_update_player_bullet_movement import system_update_player_bullet_movement
 from src.engine.service_locator import ServiceLocator
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.components.tags.c_tag_ready_text import CTagReadyText
@@ -66,6 +67,7 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         explosion_cfg = ServiceLocator.jsons_service.get('assets/cfg/explosion.json')
         player_explosion_cfg = ServiceLocator.jsons_service.get('assets/cfg/player_explosion.json')
         bullets_cfg = ServiceLocator.jsons_service.get('assets/cfg/bullets.json')
+        player_cfg = ServiceLocator.jsons_service.get('assets/cfg/player.json')
         player_entity = world.get_component(CTagPlayer)[0][0]
 
         system_animation(world, delta_time)
@@ -79,6 +81,7 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         system_charge_bullet(world, bullets_cfg["player_bullet"], player_entity)
         system_enemy_shooting(world, c_p_s.current_time, bullets_cfg['player_bullet'], lvl_cfg['shoot_time'])
         system_level_change(world, level_info, accumulated_time)
+        system_update_player_bullet_movement(world, player_entity, player_cfg['input_velocity'])
         return
 
     if c_p_s.state == PlayState.PLAYER_DEAD:
