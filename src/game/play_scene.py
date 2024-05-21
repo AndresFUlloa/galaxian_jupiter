@@ -6,6 +6,7 @@ from src.create.prefab_creator_play import create_enemies, create_player_bullet,
     create_paused_text, create_header
 from src.create.prefab_debug import create_debug_input
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
+from src.ecs.components.c_ready_wait_dp import CReadyWaitDP
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_play_state import CPlayState, PlayState
@@ -34,18 +35,11 @@ class PlayScene(Scene):
         self.paused_text_surface = None
         self.screen = engine.screen
         self.window_cfg = engine.window_cfg
-        self.current_lvl = 1
-        self.lvl_cfg = self._get_level_at_index_or_last(self.current_lvl - 1)
+        self.current_lvl = 0
+        self.lvl_cfg = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')[self.current_lvl]
         self._paused = False
         self._editor_mode = False
         self.debug_text_surface = None
-
-    def _get_level_at_index_or_last(self, index: int):
-        levels = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')
-        try:
-            return levels[index]
-        except IndexError:
-            return self.lvl_cfg[-1]
 
     def load_files(self):
         super().load_files()
@@ -54,6 +48,7 @@ class PlayScene(Scene):
         self.explosion_cfg = ServiceLocator.jsons_service.get('assets/cfg/explosion.json')
         self.enemies_cfg = ServiceLocator.jsons_service.get('assets/cfg/enemies.json')
         self.level_cfg = ServiceLocator.jsons_service.get('assets/cfg/level.json')
+        self.game_times_cfg = ServiceLocator.jsons_service.get('assets/cfg/game_times.json')
 
     def do_create(self):
         super().do_create()
@@ -78,12 +73,9 @@ class PlayScene(Scene):
 
         create_input_player(self.ecs_world)
         create_debug_input(self.ecs_world)
-        # self._bullet_charged = create_player_bullet(self.ecs_world, self.bullets_cfg["player_bullet"],
-        #                                            self._player_entity)
-        # self._bullet_charged_v = self.ecs_world.component_for_entity(self._bullet_charged, CVelocity)
-        # create_enemies(self.ecs_world, self.enemies_cfg, pygame.Vector2(self.lvl_cfg['enemies_velocity'], 0))
         self._play_state_entity = self.ecs_world.create_entity()
         self.ecs_world.add_component(self._play_state_entity, CPlayState())
+        self.ecs_world.create_entity(CReadyWaitDP(self.game_times_cfg['ready_time_dead_player']))
 
     def do_update(self, delta_time: float):
         super().do_update(delta_time)
@@ -92,7 +84,6 @@ class PlayScene(Scene):
             delta_time,
             self.screen,
             self.level_cfg,
-            self.lvl_cfg,
             self._accumulated_time
         )
 
