@@ -91,7 +91,7 @@ class PlayScene(Scene):
         self._paused = False
 
     def do_action(self, c_input: CInputCommand):
-        system_player_bullet_movement(self.ecs_world, c_input, self.player_cfg["input_velocity"], self._player_entity)
+        system_player_bullet_movement(self.ecs_world, c_input, self._player_entity)
 
         if c_input.name == "PLAYER_FIRE":
             c_p_s = self.ecs_world.component_for_entity(self._play_state_entity, CPlayState)
