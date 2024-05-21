@@ -12,5 +12,10 @@
       "x": 170,
       "y": 18
     }
+  },
+  "ready":{
+    "sound": "assets/snd/gecop__playing-galaxian.ogg",
+    "play_sound": "assets/snd/play_starfield-effect-1.ogg"
   }
+
 }
