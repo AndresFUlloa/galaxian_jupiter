@@ -104,10 +104,12 @@ def create_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: di
     ServiceLocator.sounds_service.play(explosion_info["sound"])
 
 
-def create_player_explosion(world: esper.World, pos: pygame.Vector2, explosion_info: dict):
+def create_player_explosion(world: esper.World, player_rect: pygame.Rect, explosion_info: dict):
     explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])
-    pos = pygame.Vector2(pos.x,
-                         pos.y)
+    exp_rect = explosion_surface.get_rect()
+    exp_rect.width /= explosion_info['animations']['number_frames']
+    exp_rect.center = player_rect.center
+    pos = pygame.Vector2(exp_rect.topleft[0], exp_rect.topleft[1])
     vel = pygame.Vector2(0, 0)
     explosion_entity = create_sprite(world, pos, vel, explosion_surface, animations=explosion_info['animations'])
     world.add_component(explosion_entity, CTagExplosion())
