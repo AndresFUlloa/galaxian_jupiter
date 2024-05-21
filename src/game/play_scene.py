@@ -40,6 +40,7 @@ class PlayScene(Scene):
         self._paused = False
         self._editor_mode = False
         self.debug_text_surface = None
+        self.game_over = False
 
     def load_files(self):
         super().load_files()
@@ -79,7 +80,7 @@ class PlayScene(Scene):
 
     def do_update(self, delta_time: float):
         super().do_update(delta_time)
-        system_update_play_state(
+        self.game_over = system_update_play_state(
             self.ecs_world,
             delta_time,
             self.screen,
@@ -116,6 +117,10 @@ class PlayScene(Scene):
 
         if self._editor_mode:
             self._do_editor_action(c_input)
+
+        if c_input.name == "PLAYER_START":
+            if c_input.phase == CommandPhase.START and self.game_over:
+                self.switch_scene("MENU")
 
     def _do_editor_action(self, action: CInputCommand):
         if action.name == "KILL_ALL":
