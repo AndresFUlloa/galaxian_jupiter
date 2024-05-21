@@ -43,6 +43,7 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
             if len(world.get_components(CTagReadyText)) == 0:
                 ready_entity = create_text(world, "READY", 14, pygame.Color(234, 61, 1), pygame.Vector2(128, 200),
                                            TextAlignment.CENTER)
+                ServiceLocator.sounds_service.play(level_info["ready"]["sound"]) # sonido de inicio del ready
                 world.add_component(ready_entity, CTagReadyText())
             return False
         if game_times_cfg["ready_time_enemy"] <= c_p_s.current_time < game_times_cfg["ready_time_off"]:
