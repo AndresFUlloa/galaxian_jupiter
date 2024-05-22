@@ -120,6 +120,7 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
             system_explosion_time(world)
             return False
         if len(world.get_components(CTagGameOverChar)) == 0:
+            ServiceLocator.sounds_service.play("assets/snd/game_over.ogg")
             create_game_over(world)
         stopped = system_stop_game_over(world)
         return stopped
