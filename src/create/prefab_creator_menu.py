@@ -44,7 +44,7 @@ def create_menu_texts (world:esper.World,screen_size_height):
     world.add_component(text_entity, CTagMovible(120,208))
 
 def add_menu_images(world:esper.World,screen_size_height):
-    arrow_surface = ServiceLocator.images_service.get('assets/img/triangulo-blanco.png')
+    arrow_surface = ServiceLocator.images_service.get('assets/img/Triangulo_blanco.png')
     pos_y= screen_size_height+109
     pos = pygame.Vector2(80,pos_y)
     vel = pygame.Vector2(0, 0)
