@@ -1,5 +1,6 @@
 import esper
 import pygame
+from src.ecs.components.c_bullet_state import CBulletState
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_surface import CSurface
@@ -8,7 +9,7 @@ from src.ecs.components.tags.c_tag_player_bullet import CTagPlayerBullet
 
 def system_player_bullet_boundaries(world:esper.World, screen:pygame.Surface):
     screen_rect = screen.get_rect()
-    components = world.get_components(CTransform, CSurface, CTagPlayerBullet)
+    components = world.get_components(CTransform, CSurface,CBulletState)
 
     c_t:CTransform
     c_s:CSurface

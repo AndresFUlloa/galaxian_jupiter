@@ -1,18 +1,11 @@
-import esper
 import pygame
 
-from src.create.prefab_creator import create_player, create_input_player
-from src.ecs.components.c_input_command import CInputCommand, CommandPhase
-from src.ecs.components.c_velocity import CVelocity
-from src.ecs.systems.s_input import system_input
-from src.ecs.systems.s_movement import system_movement
-from src.ecs.systems.s_player_boundaries import system_player_boundaries
-from src.ecs.systems.s_rendering import system_rendering
+import esper
+from src.ecs.components.c_input_command import CInputCommand
 from src.engine.scenes.scene import Scene
 from src.engine.service_locator import ServiceLocator
 from src.game.menu_scene import MenuScene
 from src.game.play_scene import PlayScene
-from src.utilities.config_loader import load_config_file
 
 
 class GameEngine:
@@ -22,7 +15,8 @@ class GameEngine:
         t_color = self.window_cfg["bg_color"]
         pygame.init()
         pygame.display.set_caption(self.window_cfg['title'])
-        self.screen = pygame.display.set_mode((screen_size['w'], screen_size['h']), pygame.SCALED)  # eliminar el scaled
+        self.screen_size_height = screen_size['h']
+        self.screen = pygame.display.set_mode((screen_size['w'],self.screen_size_height), pygame.SCALED) #eliminar el scaled
         self._clock = pygame.time.Clock()
         self.is_running = False
         self._framerate = self.window_cfg['framerate']

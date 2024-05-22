@@ -45,7 +45,8 @@ def create_player(world: esper.World, player_info: dict) -> int:
         player_info['start_pos']['x'] - player_size[0] / 2, player_info['start_pos']['y'] - player_size[1])
     velocity = pygame.Vector2(0, 0)
     player_entity = create_sprite(world, position, velocity, player_surface)
-    world.add_component(player_entity, CTagPlayer())
+    world.add_component(player_entity, CTagPlayer(player_info['lives']))
+    world.component_for_entity(player_entity, CSurface).is_visible = False
     return player_entity
 
 
@@ -53,9 +54,11 @@ def create_input_player(world: esper.World):
     input_left = world.create_entity()
     input_right = world.create_entity()
     input_fire = world.create_entity()
+    input_start = world.create_entity()
     world.add_component(input_left, CInputCommand("PLAYER_LEFT", [pygame.K_LEFT, pygame.K_a]))
     world.add_component(input_right, CInputCommand("PLAYER_RIGHT", [pygame.K_RIGHT, pygame.K_d]))
     world.add_component(input_fire, CInputCommand("PLAYER_FIRE", [pygame.K_z]))
+    world.add_component(input_start, CInputCommand("PLAYER_START", [pygame.K_RETURN]))
     pause_action = world.create_entity()
     world.add_component(pause_action, CInputCommand("PAUSE", [pygame.K_p]))
 

@@ -1,0 +1,21 @@
+{
+  "flag": {
+    "image": "assets/img/invaders_level_flag.png",
+    "position": {
+      "x": 201,
+      "y": 13
+    }
+  },
+  "life": {
+    "image": "assets/img/test.png",
+    "position": {
+      "x": 170,
+      "y": 18
+    }
+  },
+  "ready":{
+    "sound": "assets/snd/gecop__playing-galaxian.ogg",
+    "play_sound": "assets/snd/play_starfield-effect-1.ogg"
+  }
+
+}
