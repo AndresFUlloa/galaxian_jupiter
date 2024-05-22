@@ -67,6 +67,7 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         pygame.mixer.init()
         pygame.mixer.music.load('assets/snd/play_starfield-effect-1.ogg')
         pygame.mixer.music.play(loops=-1)
+        pygame.mixer.music.set_volume(0.3)
 
     if c_p_s.state == PlayState.PLAY:
        
