@@ -65,7 +65,7 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         c_p_s.state = PlayState.PLAY
         
         pygame.mixer.init()
-        pygame.mixer.music.load('assets/snd/enemy_launch.ogg')
+        pygame.mixer.music.load('assets/snd/play_starfield-effect-1.ogg')
         pygame.mixer.music.play(loops=-1)
 
     if c_p_s.state == PlayState.PLAY:
@@ -126,9 +126,11 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
             system_explosion_time(world)
             return False
         if len(world.get_components(CTagGameOverChar)) == 0:
+            pygame.mixer.music.stop()
             ServiceLocator.sounds_service.play("assets/snd/game_over.ogg")
             create_game_over(world)
         stopped = system_stop_game_over(world)
+
         return stopped
 
     return False
