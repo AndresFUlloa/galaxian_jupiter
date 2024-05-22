@@ -41,6 +41,7 @@ class PlayScene(Scene):
         self._editor_mode = False
         self.debug_text_surface = None
         self.game_over = False
+      
 
     def load_files(self):
         super().load_files()

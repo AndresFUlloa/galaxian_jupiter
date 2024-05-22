@@ -6,6 +6,7 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_emeny_bullet import CTagEnemyBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.engine.service_locator import ServiceLocator
 
 
 def system_enemy_shooting(world: esper.World, acumulated_time: float, bullet_info: dict, shoot_time: dict):
@@ -23,4 +24,5 @@ def system_enemy_shooting(world: esper.World, acumulated_time: float, bullet_inf
             enemy_index = random.randrange(0, number_of_enemys, 1)
             enemy_entity = components[enemy_index][0]
             # disparar
+            ServiceLocator.sounds_service.play("assets/snd/player_shoot.ogg")
             create_enemy_bullet(world, bullet_info, enemy_entity, player)

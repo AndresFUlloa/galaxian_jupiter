@@ -3,6 +3,7 @@ from src.ecs.components.c_bullet_state import CBulletState, BulletState
 from src.ecs.components.c_velocity import CVelocity
 
 from src.ecs.systems.s_player_bullet_movement import _search_charged_bullet
+from src.engine.service_locator import ServiceLocator
 
 
 def system_shoot_bullet(world: esper.World, bullet_speed: int) -> bool:
@@ -19,5 +20,6 @@ def system_shoot_bullet(world: esper.World, bullet_speed: int) -> bool:
     c_b_s = world.component_for_entity(bullet_entity, CBulletState)
 
     c_b_s.state = BulletState.SHOT
+    ServiceLocator.sounds_service.play("assets/snd/player_shoot.ogg")
     return True
 

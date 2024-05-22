@@ -63,8 +63,15 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         _change_enemies_velocity(world, ServiceLocator.jsons_service.get(
             'assets/cfg/lvls.json')[c_p_s.current_lvl]['enemies_velocity'])
         c_p_s.state = PlayState.PLAY
+        
+        pygame.mixer.init()
+        pygame.mixer.music.load('assets/snd/play_starfield-effect-1.ogg')
+        pygame.mixer.music.play(loops=-1)
+        pygame.mixer.music.set_volume(0.3)
 
     if c_p_s.state == PlayState.PLAY:
+       
+        
         lvl_cfg = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')[c_p_s.current_lvl]
         window_cfg = ServiceLocator.jsons_service.get('assets/cfg/window.json')
         explosion_cfg = ServiceLocator.jsons_service.get('assets/cfg/explosion.json')
@@ -120,8 +127,11 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
             system_explosion_time(world)
             return False
         if len(world.get_components(CTagGameOverChar)) == 0:
+            pygame.mixer.music.stop()
+            ServiceLocator.sounds_service.play("assets/snd/game_over.ogg")
             create_game_over(world)
         stopped = system_stop_game_over(world)
+
         return stopped
 
     return False
