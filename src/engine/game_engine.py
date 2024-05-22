@@ -1,5 +1,5 @@
 import pygame
-
+import asyncio
 import esper
 from src.ecs.components.c_input_command import CInputCommand
 from src.engine.scenes.scene import Scene
@@ -16,7 +16,7 @@ class GameEngine:
         pygame.init()
         pygame.display.set_caption(self.window_cfg['title'])
         self.screen_size_height = screen_size['h']
-        self.screen = pygame.display.set_mode((screen_size['w'],self.screen_size_height), pygame.SCALED) #eliminar el scaled
+        self.screen = pygame.display.set_mode((screen_size['w'],self.screen_size_height)) #eliminar el scaled
         self._clock = pygame.time.Clock()
         self.is_running = False
         self._framerate = self.window_cfg['framerate']
@@ -37,7 +37,7 @@ class GameEngine:
         self.window_cfg = ServiceLocator.jsons_service.get('assets/cfg/window.json')
         self.player_cfg = ServiceLocator.jsons_service.get('assets/cfg/player.json')
 
-    def run(self, star_scene_name: str) -> None:
+    async def run(self, star_scene_name: str) -> None:
         self.is_running = True
         self._current_scene = self._scenes[star_scene_name]
         self._create()
@@ -47,6 +47,7 @@ class GameEngine:
             self._update()
             self._draw()
             self._handle_switch_scene()
+            await asyncio.sleep(0)
         self._clean()
 
     def switch_scene(self, new_scene_name: str):
