@@ -54,4 +54,4 @@ python main.py
 
 ## Juego en línea
 
-Puedes jugar a la versión en línea del juego en [este enlace](http://www.example.com).
+Puedes jugar a la versión en línea del juego en [este enlace](https://rockwin.itch.io/galaxian-jupiter).
