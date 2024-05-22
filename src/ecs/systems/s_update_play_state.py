@@ -43,7 +43,7 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
             if len(world.get_components(CTagReadyText)) == 0:
                 ready_entity = create_text(world, "READY", 14, pygame.Color(234, 61, 1), pygame.Vector2(128, 200),
                                            TextAlignment.CENTER)
-                ServiceLocator.sounds_service.play(level_info["ready"]["sound"]) # sonido de inicio del ready
+                ServiceLocator.sounds_service.play(level_info["ready"]["sound"])  # sonido de inicio del ready
                 world.add_component(ready_entity, CTagReadyText())
             return False
         if game_times_cfg["ready_time_enemy"] <= c_p_s.current_time < game_times_cfg["ready_time_off"]:
@@ -63,16 +63,17 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         _change_enemies_velocity(world, ServiceLocator.jsons_service.get(
             'assets/cfg/lvls.json')[c_p_s.current_lvl]['enemies_velocity'])
         c_p_s.state = PlayState.PLAY
-        
+
         pygame.mixer.init()
         pygame.mixer.music.load('assets/snd/play_starfield-effect-1.ogg')
         pygame.mixer.music.play(loops=-1)
         pygame.mixer.music.set_volume(0.3)
 
     if c_p_s.state == PlayState.PLAY:
-       
-        
-        lvl_cfg = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')[c_p_s.current_lvl]
+        levels = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')
+        current_lvl = len(levels) - 1 if c_p_s.current_lvl >= len(levels) else c_p_s.current_lvl
+
+        lvl_cfg = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')[current_lvl]
         window_cfg = ServiceLocator.jsons_service.get('assets/cfg/window.json')
         explosion_cfg = ServiceLocator.jsons_service.get('assets/cfg/explosion.json')
         player_explosion_cfg = ServiceLocator.jsons_service.get('assets/cfg/player_explosion.json')
