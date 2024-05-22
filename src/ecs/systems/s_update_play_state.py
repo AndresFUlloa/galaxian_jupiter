@@ -63,8 +63,14 @@ def system_update_play_state(world: esper.World, delta_time: float, screen: pyga
         _change_enemies_velocity(world, ServiceLocator.jsons_service.get(
             'assets/cfg/lvls.json')[c_p_s.current_lvl]['enemies_velocity'])
         c_p_s.state = PlayState.PLAY
+        
+        pygame.mixer.init()
+        pygame.mixer.music.load('assets/snd/enemy_launch.ogg')
+        pygame.mixer.music.play(loops=-1)
 
     if c_p_s.state == PlayState.PLAY:
+       
+        
         lvl_cfg = ServiceLocator.jsons_service.get('assets/cfg/lvls.json')[c_p_s.current_lvl]
         window_cfg = ServiceLocator.jsons_service.get('assets/cfg/window.json')
         explosion_cfg = ServiceLocator.jsons_service.get('assets/cfg/explosion.json')
